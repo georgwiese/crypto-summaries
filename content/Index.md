@@ -1,0 +1,3 @@
+These are my personal summaries of Cryptography books and papers. If you find any mistakes, please open a pull request in [georgwiese/crypto-summaries](https://github.com/georgwiese/crypto-summaries).
+
+Current state: Summarized most of Justin Thaler's [[Proofs, Arguments, and Zero-Knowledge]]. Also, I typically leave out content that appears in [this summary](https://docs.google.com/document/d/1Uep25FBlJHvlovUJkItpvRp7FyvUHQd-ib91Wsh1qMw/edit?usp=sharing) I created earlier on [A Graduate Course in  Applied Cryptography](https://toc.cryptobook.us/) and [The MoonMath Manual](https://leastauthority.com/community-matters/moonmath-manual/).
