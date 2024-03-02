@@ -28,6 +28,8 @@ jobs:
         run: npm ci
       - name: Build Quartz
         run: npx quartz build
+      - name: Copy index.html
+        run: cp index.html public/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
