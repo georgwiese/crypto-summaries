@@ -23,7 +23,7 @@ $$
 ### LogUp based on fractional sum check
 ([[Multivariate lookups based on logarithmic derivatives]])
 
-The paper describes the protocol in the multivariate setting, but this is easily generalized to the univariate setting by using [[Univariate Sum-Check Protocol]] and [[Univariate Zero-Check Protocol]].
+The paper describes the protocol in the multivariate setting, but this can be adopted to the univariate setting by using the [[Univariate Sum-Check Protocol]] and [[Univariate Zero-Check Protocol]] instead of the multivariate variants.
 
 #### Example: Looking up one column, no batching
 Let $f_A, f_B, m: \mathbb{F}^n \rightarrow \mathbb{F}$ be the two multilinear polynomials that map each element of the boolean hypercube $H$ to an element in $A$, $B$, and the multiplicity respectively.
@@ -32,7 +32,7 @@ To show that the equality above holds, the verifier first samples a random $x \i
 $$
 \sum_{\vec{x} \in H} \frac{1}{x - f_A(\vec{x})} - \frac{m(\vec{x})}{x - f_B(\vec{x})}
 $$
-The problem is that the expression we're summing over is not a polynomial, so the sum-check protocol is not directly applicable!
+The problem is that the expression we're summing over is *not* a polynomial, so the sum-check protocol is not directly applicable!
 
 To get around this, prover interpolates and commits to a polynomial $h$ such that:
 $$
@@ -61,14 +61,7 @@ h(\vec{x}) + &eq(\vec{z}, \vec{x}) \cdot( \\
 \end{split}
 \end{equation}
 $$
-where $\vec{z}$ is a verifier challenge and $eq$ is the unique multilinear polynomial such that:
-$$
-eq(x, y) :=
-\begin{cases}
-1 & \text{if } x = y, \\
-0 & \text{otherwise}.
-\end{cases}
-$$
+where $\vec{z}$ is a verifier challenge and $eq$ is the unique multilinear extension of the equality function on the Boolean hypercube.
 #### Batching
 In principle, this technique can be generalized to looking up many columns, by defining $h$ such that:
 $$
