@@ -1,18 +1,15 @@
-# Quartz v4
+# Crypto summaries
 
-> “[One] who works with the door open gets all kinds of interruptions, but [they] also occasionally gets clues as to what the world is and what might be important.” — Richard Hamming
+-> To view this site, go to [georgwiese.github.io/crypto-summaries](https://georgwiese.github.io/crypto-summaries/).
 
-Quartz is a set of tools that helps you publish your [digital garden](https://jzhao.xyz/posts/networked-thought) and notes as a website for free.
-Quartz v4 features a from-the-ground rewrite focusing on end-user extensibility and ease-of-use.
+This is a fork of [jackyzha0/quartz](https://github.com/jackyzha0/quartz) containing my personal summaries of Cryptography books and papers. The actual content is in [content](./content). If you find any mistakes, please open a pull request :)
 
-🔗 Read the documentation and get started: https://quartz.jzhao.xyz/
-
-[Join the Discord Community](https://discord.gg/cRFFHYye7t)
-
-## Sponsors
-
-<p align="center">
-  <a href="https://github.com/sponsors/jackyzha0">
-    <img src="https://cdn.jsdelivr.net/gh/jackyzha0/jackyzha0/sponsorkit/sponsors.svg" />
-  </a>
-</p>
+To run:
+```bash
+# Install dependencies
+npm i
+# Serve locally
+npx quartz build --serve
+# Commit, push, and re-deploy
+npx quartz sync
+```
