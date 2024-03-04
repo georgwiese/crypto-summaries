@@ -15,10 +15,4 @@ To show that $A \subseteq B$, we let the prover compute columns $A'$ and $B'$ su
 | 1 | 3 | 1  | 2  |
 | 4 | 2 | 4  | 4  |
 | 4 | 1 | 4  | 3  |
-For the permutation argument, they do a [[Permutation Check via Product Check]], using a *single* accumulator column $Z$ where:
-$$
-Z_{2^k} = Z_0 = 1
-$$
-$$
-Z_{i + 1} = Z_i \cdot \frac{(A_i + \beta) \cdot (B_i + \gamma)}{(A'_i + \beta) \cdot (B'_i + \gamma)}
-$$
+For the permutation argument, they do a [[Permutation Check via Product Check]], using a *single* accumulator column $Z$ for both permutations.
