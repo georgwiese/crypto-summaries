@@ -1,4 +1,6 @@
-*Source: [[Proofs, Arguments, and Zero-Knowledge]], section 10.5*
+*Sources:*
+- [[Proofs, Arguments, and Zero-Knowledge]], section 10.5
+- [[Brakedown - Linear-time and field-agnostic SNARKs for R1CS]]
 
 These protocols exploit the [[Tensor Product Structure in Polynomial Evaluation Queries]] to commit to a degree-$n$ polynomial $q$. Let $m := \sqrt{n}$.
 
