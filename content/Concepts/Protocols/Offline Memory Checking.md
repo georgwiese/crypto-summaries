@@ -22,32 +22,32 @@ If and only if the prover is honest, the read and write *multi*-sets will be equ
 Source: [[Unlocking the lookup singularity with Lasso]]
 
 Suppose we have:
-- A multi-linear extension $\widetilde{t}: \mathbb{F}^{\log M} \rightarrow \mathbb{F}$  of some table (i.e., read-only memory)
-- A multi-linear extension $\widetilde{i}: \mathbb{F}^{\log m} \rightarrow \mathbb{F}$ of indices
-- A multi-linear extension $\widetilde{v}: \mathbb{F}^{\log m} \rightarrow \mathbb{F}$ of values
+- A multi-linear extension $t: \mathbb{F}^{\log M} \rightarrow \mathbb{F}$  of some table (i.e., read-only memory)
+- A multi-linear extension $a: \mathbb{F}^{\log m} \rightarrow \mathbb{F}$ of addresses
+- A multi-linear extension $v: \mathbb{F}^{\log m} \rightarrow \mathbb{F}$ of values
 
 We want to show that:
 $$
-\forall{j \in \{0, 1\}}^{\log m}: \widetilde{v}(j) = \widetilde{t}(\mathtt{bits}(\widetilde{i}(j)))
+\forall{j \in \{0, 1\}}^{\log m}: v(j) = t(\mathtt{bits}(a(j)))
 $$
 where $\mathtt{bits}: \mathbb{F} \rightarrow \mathbb{F}^{\log N}$  is the function that maps a field element to its bit representation.
 
 We can show this is the case by simulating the offline memory verifier in a SNARK.
 
-Specifically, the prover commits to two polynomials, $\widetilde{c}_{read}: \mathbb{F}^{\log m} \rightarrow \mathbb{F}$ and $\widetilde{c}_{final}: \mathbb{F}^{\log M} \rightarrow \mathbb{F}$, containing the counts returned by the offline memory prover for the "normal" and final read operations.
+Specifically, the prover commits to two polynomials, $c_{read}: \mathbb{F}^{\log m} \rightarrow \mathbb{F}$ and $c_{final}: \mathbb{F}^{\log M} \rightarrow \mathbb{F}$, containing the counts returned by the offline memory prover for the "normal" and final read operations.
 
 The memory operations were performed correctly if $RS = WS$ where:
 $$
 \begin{equation}
 \begin{split}
-RS = &\{(\widetilde{i}(j), \widetilde{v}(j), \widetilde{c}_{read}(j)): j \in \{0, 1\}^{\log m}\} \\ &\cup \{(\mathtt{to\_field}(j), \widetilde{t}(j), \widetilde{c}_{final}(j)): j \in \{0, 1\}^{\log M}\}
+RS = &\{(a(j), v(j), c_{read}(j)): j \in \{0, 1\}^{\log m}\} \\ &\cup \{(\mathtt{to\_field}(j), t(j), c_{final}(j)): j \in \{0, 1\}^{\log M}\}
 \end{split}
 \end{equation}
 $$
 $$
 \begin{equation}
 \begin{split}
-WS = &\{(\mathtt{to\_field}(j), \widetilde{t}(j), 0): j \in \{0, 1\}^{\log M}\} \\ &\cup \{(\widetilde{i}(j), \widetilde{v}(j), \widetilde{c}_{read}(j) + 1): j \in \{0, 1\}^{\log m}\}
+WS = &\{(\mathtt{to\_field}(j), t(j), 0): j \in \{0, 1\}^{\log M}\} \\ &\cup \{(a(j), v(j), c_{read}(j) + 1): j \in \{0, 1\}^{\log m}\}
 \end{split}
 \end{equation}
 $$
