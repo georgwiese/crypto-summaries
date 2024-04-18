@@ -81,7 +81,7 @@ Adding to rational numbers $\frac{a_0}{b_0}$ and $\frac{a_1}{b_1}$ can be achiev
 
 The execution of the circuit can then be proven using the [[GKR]] protocol.
 ### cq (cached quotients)
-cq is essentially an instantiation of LogUp (in its original variant) in the univariate setting, using [[KGZ]] commitments.
+cq is essentially an instantiation of LogUp (in its original variant) in the univariate setting, using [[KZG]] commitments.
 
 The main achievement is that the prover time is independent of the table size: We can prove a subset relation for a multi-set of size $n$ into a table of size $N$ in time $O(n \log n)$ (and pre-processing time $O(N \log N)$).
 

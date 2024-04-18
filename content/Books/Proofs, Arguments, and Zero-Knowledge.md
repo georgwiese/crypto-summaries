@@ -224,7 +224,7 @@ Version: July 18, 2023
 		- $\mathbb{G}_1 = \mathbb{G}_2$ implies that DDH is false!
 		- In practice, if $\mathbb{G}$ is an elliptic curve group defined over $\mathbb{F}_p$ then $\mathbb{G}_T$ is a subgroup of $\mathbb{F}_{p^k}$ where $k$ is called the *embedding degree* and equal to the smallest integer such that $|\mathbb{G}|$ divides $p^k - 1$
 		- -> Embedding degree must be low for a curve to be *pairing friendly*
-- [[KGZ]]
+- [[KZG]]
 - [[Dory]]
 ## Chapter 16: Wrap-Up of Polynomial Commitments
 - **Batch evaluation of homomorphically committed polynomials**:
