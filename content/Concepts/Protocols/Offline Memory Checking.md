@@ -1,4 +1,4 @@
-by Blum at all (1995)
+by [Blum at al. (1994)](https://link.springer.com/article/10.1007/BF01185212)
 
 Sources:
 - [Explanation (YouTube)](https://youtu.be/dmVweFbJsxw?si=26si_BTIIcVzPb0m&t=4474)
