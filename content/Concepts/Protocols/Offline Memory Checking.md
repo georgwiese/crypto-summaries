@@ -12,7 +12,7 @@ The verifier maintains two sets, which can be compressed and updated incremental
 - **Write Set**: $(address_i, value_i, count_i)$ written to memory
 
 Then, the verifier behaves as follows:
-- At the beginning of the execution, (s)he writes for each address $a_i$ the tuple $(a_i, 0, 0)$ (or some other initial value)
+- At the beginning of the execution, they write for each address $a_i$ the tuple $(a_i, 0, 0)$ (or some other initial value)
 - Each read returning $(a_i, v_i, c_i)$ is followed by a write of $(a_i, v_i, c_i + 1)$
 - At the end of the execution, the verifier reads all addresses
 
