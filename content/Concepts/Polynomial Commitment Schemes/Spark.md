@@ -7,7 +7,7 @@
 
 **Representing sparse polynomials with dense polynomials**: Any $(\log N)$-variate multilinear polynomial $D$ can be written as:
 $$
-D(r) = \sum_{i \in \{0, 1\}^{\log N}: D(i) \neq 0} D(i, j) \cdot \widetilde{eq}_{\log N}(i, r)
+D(r) = \sum_{i \in \{0, 1\}^{\log N}: D(i) \neq 0} D(i) \cdot \widetilde{eq}_{\log N}(i, r)
 $$
 where $\widetilde{eq}_s(x, y)$ is the unique multi-linear extension of the equality function on the boolean hypercube:
 $$

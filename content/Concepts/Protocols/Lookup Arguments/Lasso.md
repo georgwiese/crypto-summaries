@@ -7,7 +7,7 @@ a = M \cdot t
 $$
 Up to negligible soundness error, this is equivalent to:
 $$
-\widetilde{a}(r) = \sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(r)
+\widetilde{a}(r) = \sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(y)
 $$
 where $\widetilde{a}$, $\widetilde{t}$, and $\widetilde{M}$ are the multilinear extensions and $r$ is a random verifier challenge.
 
@@ -18,7 +18,7 @@ We commit to $\widetilde{M}$ using [[Spark]]. However, we can specialize it such
 
 Recall that in the standard Spark evaluation proof, we would show that:
 $$
-\widetilde{M}(r_x, r_y) = \sum_{k \in \{0, 1\}^{\log m}} val(k) \cdot \widetilde{eq}_{\log N}(\mathtt{bits}(row(k)), r_x) \cdot \widetilde{eq}_{\log m}(\mathtt{bits}(col(k)), r_y)
+\widetilde{M}(r_x, r_y) = \sum_{k \in \{0, 1\}^{\log m}} val(k) \cdot \widetilde{eq}_{\log m}(\mathtt{bits}(row(k)), r_x) \cdot \widetilde{eq}_{\log m}(\mathtt{bits}(col(k)), r_y)
 $$
 where commitments to $val$, $row$ and $col$ represent the commitment to $\widetilde{M}$. But because $M$'s rows should be unit vectors we have:
 - $val(k) = 1$, so it can be removed
@@ -32,7 +32,7 @@ $$
 
 Surge generalizes Spark to directly prove:
 $$
-\sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(r)
+\sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(y)
 $$
 for some $r \in \mathbb{F}^{\log m}$ and multi-linear extension $\widetilde{t}$ of a table $T$.
 
@@ -46,6 +46,6 @@ where $k = \alpha / c$.
 The rest is a straight-forward generalization of Spark:
 - The commitment to $\widetilde{M}$ consists of commitments to $c$ $(\log m)$-variate dense polynomials $dim_1, ..., dim_c$
 - For evaluation, the prover commits to $(\log m)$-variate helper polynomials $E_1, ..., E_{\alpha}$
-- To show that $v = \sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(r)$, the [[Multivariate Sum-Check Protocol]] is applied to polynomial
+- To show that $v(r) = \sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(y)$, the [[Multivariate Sum-Check Protocol]] is applied to polynomial
   $h(k) := \widetilde{eq}(r, k) \cdot g(E_1(k), ..., E_{\alpha}(k))$
 - Finally, the prover shows that $E_1, ..., E_{\alpha}$ are well-formed using [[Offline Memory Checking]] (which requires it to send commitments to $m + N^{1 / c}$ read counts for each)
