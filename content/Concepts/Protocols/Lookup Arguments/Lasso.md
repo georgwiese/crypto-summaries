@@ -36,10 +36,18 @@ $$
 $$
 for some $r \in \mathbb{F}^{\log m}$ and multi-linear extension $\widetilde{t}$ of a table $T$.
 
+Another way to look at it is that:
+$$
+\sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(y)
+=
+\sum_{i \in \{0, 1\}^{\log m}} \widetilde{eq}(r, i) \cdot \widetilde{l}(i)
+$$
+where $i$ iterates over the indices from $1$ to $m$ and $\widetilde{l}(i)$ ith lookup!
+
 We assume that the table has a **Spark-only structure (SOS)** (or: is **decomposable**), which means that each entry $T[i]$ (with $i \in \{1, ..., N\}$) can be evaluated quickly by consulting $\alpha \in O(c)$ subtables $T_1, ..., T_{\alpha}$ of size $N^{1 / c}$.
 To evaluate $\widetilde{t}(r)$ with $r \in \{0, 1\}^{\log N}$, write $r = (r_1, ..., r_c) \in (\{0, 1\}^{\log N / c})^c$. Then, there should be an $\alpha$-variate polynomial $g$ such that:
 $$
-\forall r \in \{0, 1\}^{\log N}: T[r] = g(T_1[r_1], ..., T_{k}[r_1], ..., T_{\alpha - k + 1}[r_c], ..., T_{\alpha}[r_c])
+\forall r \in \{0, 1\}^{\log N}: T[r] = \widetilde{l}(r) = g(T_1[r_1], ..., T_{k}[r_1], ..., T_{\alpha - k + 1}[r_c], ..., T_{\alpha}[r_c])
 $$
 where $k = \alpha / c$.
 
@@ -47,5 +55,5 @@ The rest is a straight-forward generalization of Spark:
 - The commitment to $\widetilde{M}$ consists of commitments to $c$ $(\log m)$-variate dense polynomials $dim_1, ..., dim_c$
 - For evaluation, the prover commits to $(\log m)$-variate helper polynomials $E_1, ..., E_{\alpha}$
 - To show that $v(r) = \sum_{y \in \{0, 1\}^{\log N}} \widetilde{M}(r, y) \cdot \widetilde{t}(y)$, the [[Multivariate Sum-Check Protocol]] is applied to polynomial
-  $h(k) := \widetilde{eq}(r, k) \cdot g(E_1(k), ..., E_{\alpha}(k))$
+  $h(i) := \widetilde{eq}(r, i) \cdot g(E_1(i), ..., E_{\alpha}(i))$
 - Finally, the prover shows that $E_1, ..., E_{\alpha}$ are well-formed using [[Offline Memory Checking]] (which requires it to send commitments to $m + N^{1 / c}$ read counts for each)
