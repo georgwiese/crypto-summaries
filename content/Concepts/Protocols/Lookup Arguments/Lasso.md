@@ -62,7 +62,7 @@ The rest is a straight-forward generalization of Spark:
 - To show that $v(r) = \sum_{i \in \{0, 1\}^{\log m}} \widetilde{eq}(r, i) \cdot g(E_1(i), ..., E_{\alpha}(i))$, the [[Multivariate Sum-Check Protocol]] is applied to polynomial
   $h(i) := \widetilde{eq}(r, i) \cdot g(E_1(i), ..., E_{\alpha}(i))$
 - Finally, the prover shows that $E_1, ..., E_{\alpha}$ are well-formed using [[Offline Memory Checking]] (which requires it to send commitments to $m + N^{1 / c}$ read counts for each)
-# TLDR
+### TLDR
 IMO, all of this is just a complicated way of describing the following protocol:
 1. The prover commits to indices in the sub-table ($dim_1, ..., dim_c$)
 2. The prover commits to multilinear extensions of the sub-table lookups ($E_1, ... E_{\alpha}$) and proves the correctness via [[Offline Memory Checking]]
