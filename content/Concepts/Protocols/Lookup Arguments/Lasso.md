@@ -24,7 +24,7 @@ where commitments to $val$, $row$ and $col$ represent the commitment to $\wideti
 - $val(k) = 1$, so it can be removed
 - $\mathtt{bits}(row(k)) = k$, which means we have one less helper polynomial to commit to
 
-Also, Lasso uses the general version of Spark, which factors the Lagrange polynomials into $c$ parts, so the prover commits to $c$ $((\log n) / c)$-variate polynomials $dim_1, ..., dim_c$ and shows that:
+Also, Lasso uses the general version of Spark, which factors the Lagrange polynomials into $c$ parts, so the prover commits to $c$ $((\log N) / c)$-variate polynomials $dim_1, ..., dim_c$ and shows that:
 $$
 \widetilde{M}(r_x, r_y^{(1)}, ..., r_y^{(c)}) = \sum_{k \in \{0, 1\}^{\log m}} \widetilde{eq}(k, r_x) \cdot \prod_{i = 1}^c \widetilde{eq}_{\log N/c}(\mathtt{bits}(dim_i(k)), r_y^{(i)})
 $$
