@@ -4,7 +4,7 @@ Sources:
 - [Explanation (YouTube)](https://youtu.be/dmVweFbJsxw?si=26si_BTIIcVzPb0m&t=4474)
 - [[Unlocking the lookup singularity with Lasso]]
 
-### Main Idea
+### Read-only memory
 The problem they tried to solve is to force an untrusted memory to prove it worked correctly, with very low space requirements of the verifier.
 
 The verifier maintains two sets, which can be compressed and updated incrementally via permutation-invariant fingerprinting (see [[Permutation Check via Product Check]]):
@@ -57,3 +57,13 @@ $$
 $$
 
 The two multi-sets can be shown to be equal using the [[Permutation Check via Product Check]]! In particular, the grand product can be computed using a layered arithmetic circuit of depth $O(\log m + \log M)$ and proven using [[GKR]].
+
+### Read-write memory
+The original paper actually describes a read-write memory which is slightly more complex:
+- As described above, all memory cells are initialized with some value at time step $t = 0$
+- For each memory write of value $v_{cur}$ to address $addr$ at time $t_{cur}$:
+	- The prover provides $t_{prev}$ and $v_{prev}$
+	- The verifier asserts that $t_{prev} < t_{cur}$
+	- The tuple $(addr, t_{prev}, v_{prev})$ is added to the read set
+	- The tuple $(addr, t_{cur}, v_{cur})$ is added to the write set
+- A memory read works the same, but with $v_{prev} = v_{cur}$
