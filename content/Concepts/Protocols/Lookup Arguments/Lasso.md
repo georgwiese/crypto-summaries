@@ -64,5 +64,6 @@ The rest is a straight-forward generalization of Spark:
 - Finally, the prover shows that $E_1, ..., E_{\alpha}$ are well-formed using [[Offline Memory Checking]] (which requires it to send commitments to $m + N^{1 / c}$ read counts for each)
 # TLDR
 IMO, all of this is just a complicated way of describing the following protocol:
-1. The prover commits to multilinear extensions of the sub-table lookups ($E_1, ... E_{\alpha}$) and proves the correctness via [[Offline Memory Checking]]
-2. The [[Multivariate Zero Check Protocol]] is run to prove that $\forall i \in \{0, 1\}^m: \widetilde{a}(i) = g(E_1(i), ..., E_{\alpha}(i))$
+1. The prover commits to indices in the sub-table ($dim_1, ..., dim_c$)
+2. The prover commits to multilinear extensions of the sub-table lookups ($E_1, ... E_{\alpha}$) and proves the correctness via [[Offline Memory Checking]]
+3. The [[Multivariate Zero Check Protocol]] is run to prove that $\forall i \in \{0, 1\}^m: \widetilde{a}(i) = g(E_1(i), ..., E_{\alpha}(i))$
