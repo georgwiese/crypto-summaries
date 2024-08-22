@@ -8,28 +8,29 @@ Annotated PDF: [[ceno-2024-387.pdf]] (Note: older version of the paper)
 While this system was designed with GKR in mind, the core concepts translate to other prove systems (e.g. they mention Plonky2 in the discussions).
 ### GKR Circuit Structure
 
-This table describes the structure of the circuits:
+This Figure describes the structure of the circuits:
 ![[Screenshot 2024-08-22 at 11.03.53.png]]
-- **Input Layer**: Committed data needed to execute the instruction including:
+There is one layered arithmetic circuit for each instruction, consisting of three parts:
+- **Input Layer**: For each execution of the given instruction, the committed data needed to execute it including:
 	- A *input state record* $s_{in} = (pc_{in}, clk_{in}, top_{in})$, to denote the value of the program counter, clock and stack pointer before the instructions
 	- Additional witness data needed to prove correct execution (this depends on the instruction)
 - **Opcode circuits**: A small layered circuit repeated many times (in a data parallel fashion) to compute:
 	- The *output state record* $s_{out} = (pc_{out}, clk_{out}, top_{out})$
 	- Any other values that need to be written to the "bus". For example:
-		- for memory and stack, they use [[Offline Memory Checking]]
+		- For memory and stack, they use [[Offline Memory Checking]]
 		- For lookups, they use LogUp ([[LogUp & cq]]), so any expressions on the LHS / RHS of the lookup would be computed here
 - **Tree-structured circuit**: A binary tree of logarithmic depth needed to compute updates to the "bus".
 	- This could be either doing a [[Permutation Check via Product Check]] (= multi-set equality check) or compute a sum of fractions as needed in LogUp (see [[LogUp & cq]])
 	- The output will be single (extension field) value that will be known to the verifier
 		- For example, a verifier can validate that
-		  $\{s_{in}^i\}_{i \in \{1, ..., N\}} \cup \{s_{final}\} = \{s_{out}^i\}_{i \in \{1, ..., N\}} \cup \{s_{initial}\}$ 
+		  $\{s_{in}^i\}_{i \in \{1, ..., N\}} \cup \{s_{final}\} = \{s_{out}^i\}_{i \in \{1, ..., N\}} \cup \{s_{init}\}$ 
 		  -> This ensures that all operations are executed in the right order!
 
 The *chip table circuit* (if I understood this right) is responsible for initializing and finalizing memory (see [[Offline Memory Checking]]).
 
 ### Put in PIL
 
-In my understanding, this could be expressed in PIL using *one machine per instruction* and *no "main" machine*.
+In my understanding, this could be expressed in [PIL](https://docs.powdr.org/pil/index.html) using *one machine per instruction* and *no "main" machine*.
 
 Ignoring the stack pointer (not needed for a register machine), this would look somewhat like this.
 ```rust
