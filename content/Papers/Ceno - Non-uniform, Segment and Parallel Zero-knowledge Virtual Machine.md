@@ -41,7 +41,7 @@ col witness pc_in, clk_in;
 // by "sending" a tuple to the bus with multiplicity 1.
 // This is analogous to doing something like
 // [pc, OPCODE] in [rom.line, rom.opcode]
-bus_send((ROM_ID, pc, OPCODE), 1);
+bus_send((ROM_ID, pc_in, OPCODE), 1);
 
 // Execute the actual instruction, which might involve
 // reading from and writing to memory or registers and
