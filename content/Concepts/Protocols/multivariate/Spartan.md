@@ -1,5 +1,6 @@
-*Source: [[Proofs, Arguments, and Zero-Knowledge]], chapter 8*
-
+*Sources:
+- [[Proofs, Arguments, and Zero-Knowledge]], chapter 8
+- [generalized CCS backend / DSL proposal](https://hackmd.io/@levs57/By2yBLefJe): Nice blog post by Lev Soukhanov
 ### Warm-up: Clover (BTVW14)
 Achieves a verification time independent of the circuit depth!
 
@@ -28,3 +29,9 @@ $$
 This can be shown using the [[Multivariate Zero Check Protocol]].
 
 To evaluate the $g_Z(X)$ at a random point, the [[Multivariate Sum-Check Protocol]] can be executed 3 times in parallel using the same randomness. The prover can be implemented in time *linear* time in the number of non-zero entries in $A$, $B$, and $C$.
+## Generalization to CCS
+I think this is best described in [Lev's post](https://hackmd.io/@levs57/By2yBLefJe):
+- You can see R1CS of a very simple AIR of *virtual columns* $a = Az$, $b = Bz$, and $c = Cz$: `a * b = c`. Note that this already allows to express copy constraints, because $A, B, C$ can be such that the same element in $z$ is selected multiple times.
+- CCS generalizes this notion and allows for number of virtual columns (with a matrix each) and any number of constraints between them.
+- As a result, CCS generalizes R1CS, PlonK and AIR.
+- Spartan generalizes to CCS.

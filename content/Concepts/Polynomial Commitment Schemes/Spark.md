@@ -2,6 +2,7 @@
 - [[Brakedown - Linear-time and field-agnostic SNARKs for R1CS]]
 - [[Unlocking the lookup singularity with Lasso]]
 - (Originally described as part of [[Spartan]])
+- [generalized CCS backend / DSL proposal](https://hackmd.io/@levs57/By2yBLefJe): Nice blog post by Lev Soukhanov
 
 **Use-case**: In [[Spartan]], we need to commit to the *sparse* R1CS matrices, which are of size $N = M^2$, but only have $m \in \Theta(M)$ non-zero entries. They achieve a quadratic speed-up over using a dense commitment scheme.
 
