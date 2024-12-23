@@ -28,7 +28,7 @@ g_Z(X) := \left( \sum_{b \in \{0,1\}^{\log_2 n}} \widetilde{A}(X, b) \cdot \wide
 $$
 This can be shown using the [[Multivariate Zero Check Protocol]].
 
-To evaluate the $g_Z(X)$ at a random point, the [[Multivariate Sum-Check Protocol]] can be executed 3 times in parallel using the same randomness. The prover can be implemented in time *linear* time in the number of non-zero entries in $A$, $B$, and $C$.
+To evaluate the $g_Z(X)$ at a random point, the [[Multivariate Sum-Check Protocol]] can be executed 3 times in parallel using the same randomness. The prover can be implemented in time *linear* time in the number of non-zero entries in $A$, $B$, and $C$ using [[Spark]].
 ## Generalization to CCS
 I think this is best described in [Lev's post](https://hackmd.io/@levs57/By2yBLefJe):
 - You can see R1CS of a very simple AIR of *virtual columns* $a = Az$, $b = Bz$, and $c = Cz$: `a * b = c`. Note that this already allows to express copy constraints, because $A, B, C$ can be such that the same element in $z$ is selected multiple times.
