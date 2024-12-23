@@ -44,3 +44,28 @@ $$
 	- Note how any other indexed lookup (e.g. [[LogUp & cq]]) would also work!
 
 **Generalizing**: The reason we factored the Lagrange polynomials over $\{0, 1\}^N$ into **two** Lagrange polynomials over $\{0, 1\}^M$ is because $m \in \Theta(M) = \Theta(N^2)$. In general, we could split it into any number $c$ of polynomials where $\log N = c \cdot \log M$.
+### PIL sketch
+```rs
+// Description of the sparse matrix
+col fixed row, col, value;
+
+// These polynomials are not actually committed
+// at setup time, but the verifier knows how
+// to evaluate the underlying polynomials cheaply.
+// In fact, eq_r_x and eq_r_y depend on r_x and r_y,
+// which are challenges only known at runtime.
+col fixed index(i) {i};
+col fixed eq_r_x, eq_r_y;
+
+// Commit to helper polynomials & prove they are
+// well formed.
+col witness E_x, E_y;
+[row, E_x] in [index, eq_r_x];
+[col, E_y] in [index, eq_r_x];
+
+// For each non-zero entry in the sparse matrix,
+// this is contribution of that entry to the
+// evaluation of the polynomial at (r_x, y_x).
+col entry = value * E_x * E_y;
+```
+The final result is the sum of all `entries`.
