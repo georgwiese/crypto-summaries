@@ -58,10 +58,43 @@ $$
 
 The two multi-sets can be shown to be equal using the [[Permutation Check via Product Check]]! In particular, the grand product can be computed using a layered arithmetic circuit of depth $O(\log m + \log M)$ and proven using [[GKR]].
 #### PIL Sketch
+```rs
+namespace main;
+  // Address might be given (indexed lookup)
+  // or has to be provided as a witness.
+  col fixed address;
+  col witness value;
+  col witness time_stamp;
+
+  // Read value
+  bus_receive(1, (address, value, time_stamp));
+  // Write value
+  bus_send(1, (address, value, time_stamp + 1));
+
+namespace table;
+  // Often, this does not need to be committed
+  // but corresponds to a polynomial that can be
+  // evaluated cheaply by the verifier, e.g.:
+  // f(x_0, ..., x_{n - 1}) =
+  //   x_0 + ... + 2^{n - 1} * x^{n - 1}
+  col fixed address;
+  col fixed value;
+  // The number of times each element is read, i.e.,
+  // the final time steps.
+  col witness multiplicities;
+
+  // Initialize memory: Write all values with
+  // time step 0
+  bus_send(1, (address, value, 0));
+
+  // Finalize memory: Read all values one last time
+  bus_receive(1, (address, value, multiplicity));
 ```
 
-```
-
+Comparison to LogUp (see [[LogUp & cq]]):
+- The multiplicity with which elements are sent to the bus (the first argument of `bus_send` and `bus_receive`) is always 1.
+- As a consequence, the bus argument does not need to support multiplicities $> 1$ and can be simply a [[Permutation Check via Product Check]]. This is cheaper than the fractional sum-check needed in LogUp.
+- On the other hand, LogUp commits to a strict subset of columns: It does not need the `time_step` column. Also, in the case of non-indexed lookups (simply stating that `main::value` is a subset of `table::value`), the `address` columns are not needed.
 ### Read-write memory
 The original paper actually describes a read-write memory which is slightly more complex:
 - As described above, all memory cells are initialized with some value at time step $t = 0$

@@ -111,3 +111,22 @@ $$
 L_i(X) \cdot f_B(X) = q_i(X) \cdot Z_H(X) + r_i(X)
 $$
 Note that the quotients $q_i$ are independent of $A$! Therefore, we can pre-compute their commitments once and use them to compute the commitment to $q$ in $O(n)$ time.
+### Bus argument + LogUp PIL Sketch
+We can abstract a *bus* with two operations:
+- `bus_send(m, v)`: "Send" a value to the bus `m` times. Note that `v` can also be a tuple.
+- `bus_receive(m, v)`: The same as `bus_send(-m, v)`.
+
+The bus argument then proves that the sends and receives cancel out, via a fractional sum-check.
+
+Using this primitive, the LogUp argument simply becomes:
+```rs
+namespace main;
+  col witness value;
+  bus_receive(1, value);
+
+namespace table;
+  col fixed value;
+  // The number of times each element is read:
+  col witness multiplicities;
+  bus_send(multiplicity, multiplicity);
+```
