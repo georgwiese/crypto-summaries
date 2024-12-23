@@ -57,6 +57,10 @@ $$
 $$
 
 The two multi-sets can be shown to be equal using the [[Permutation Check via Product Check]]! In particular, the grand product can be computed using a layered arithmetic circuit of depth $O(\log m + \log M)$ and proven using [[GKR]].
+#### PIL Sketch
+```
+
+```
 
 ### Read-write memory
 The original paper actually describes a read-write memory which is slightly more complex:
