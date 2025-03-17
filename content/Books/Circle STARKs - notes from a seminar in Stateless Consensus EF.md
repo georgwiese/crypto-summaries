@@ -107,8 +107,27 @@ $$*has a unique solution in* $\mathbb{Z}_N$.
 - **Lagrange interpolation**: Given points $(x_0, y_0), ... (x_n, y_n) \in \mathbb{F} \times \mathbb{F}$, the ith Lagrange polynomial is $L_i(x) := \frac{\prod_{j \neq i} x - x_j}{\prod_{j \neq i} x_i - x_j}$ and the Lagrange interpolation of the points is $L(x) := \sum_{i = 0}^n y_i \cdot L_i(x)$
 - **Fast Fourier Transform** (FFT):
 	- Polynomials can be represented in evaluation form ("sampling") and coefficient form ("vector")
-	- The FFT is an efficient algorithm to compute the *Discrete Fourier Transform (DFT)*, which is a matrix-vector product of the **Vandermonde matrix** with the polynomial's coefficients => performs **evaluation**
-		- *TODO: Put matrix*
+	- The FFT is an efficient algorithm to compute the *Discrete Fourier Transform (DFT)*, which is a matrix-vector product of the **Vandermonde matrix** with the polynomial's coefficients => performs **evaluation**:$$
+\begin{pmatrix}
+    1 & x_0 & x_0^2 & \cdots & x_0^n \\
+    1 & x_1 & x_1^2 & \cdots & x_1^n \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    1 & x_n & x_n^2 & \cdots & x_n^n
+\end{pmatrix}
+\begin{pmatrix}
+    f_0 \\
+    f_1 \\
+    \vdots \\
+    f_n
+\end{pmatrix}
+=
+\begin{pmatrix}
+    y_0 \\
+    y_1 \\
+    \vdots \\
+    y_n
+\end{pmatrix}
+$$
 	- Algorithm: ![[Screenshot 2025-03-04 at 20.41.46.png]]
 # Errors?
 - Example 5.15: How can 2 times 2 be 0? Then $(\mathbb{F} \setminus 0, \cdot, 1)$ would not be a group?
