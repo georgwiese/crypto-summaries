@@ -128,7 +128,9 @@ $$*has a unique solution in* $\mathbb{Z}_N$.
     y_n
 \end{pmatrix}
 $$
+	- For efficiency, we choose $x = w$, where $w$ is an $n$th root of unity 
 	- Algorithm: ![[Screenshot 2025-03-04 at 20.41.46.png]]
+	- The inverse of $FFT_w$ is $\frac{1}{n} FFT_{w^{-1}}$
 # Errors?
 - Example 5.15: How can 2 times 2 be 0? Then $(\mathbb{F} \setminus 0, \cdot, 1)$ would not be a group?
 - Example 5.60: The factor should be $(x^2 + \sqrt{2})$?
