@@ -109,8 +109,64 @@ $$*has a unique solution in* $\mathbb{Z}_N$.
 	- Polynomials can be represented in evaluation form ("sampling") and coefficient form ("vector")
 	- The FFT is an efficient algorithm to compute the *Discrete Fourier Transform (DFT)*, which is a matrix-vector product of the **Vandermonde matrix** with the polynomial's coefficients => performs **evaluation**:![[Screenshot 2025-03-17 at 18.19.29.png]]
 	- For efficiency, we choose $x = w$, where $w$ is an $n$th root of unity 
-	- Algorithm: ![[Screenshot 2025-03-04 at 20.41.46.png]]
+	- Algorithm below
 	- The inverse of $FFT_w$ is $\frac{1}{n} FFT_{w^{-1}}$
+FFT Algorithm:
+```py
+def fft(f, omega):
+    # Base case
+    n = len(f)
+    if n == 1:
+        return f  # Nothing to transform if there's only 1 data point
+
+    # Separate even and odd-indexed elements
+    f_E = [f[2*i] for i in range(n//2)]
+    f_O = [f[2*i + 1] for i in range(n//2)]
+
+    # Recursively compute FFT on halves, using omega^2 as (n/2)-th root of unity
+    F_E = fft(f_E, omega * omega)
+    F_O = fft(f_O, omega * omega)
+
+    # Combine step: allocate output and perform the butterfly merges
+    F = [0] * n
+    for j in range(n//2):
+        t = (omega ** j) * F_O[j]
+        F[j] = F_E[j] + t
+        F[j + n//2] = F_E[j] - t
+
+    return F
+```
+More resources:
+- https://darkrenaissance.github.io/darkfi/crypto/fft.html
+- https://codeberg.org/darkrenaissance/darkfi/src/branch/master/script/research/zk/fft
+# Vector Spaces
+- A **vector space** $V$ over a field $\mathbb{F}$ is a set $V$ with a distinguished element $0_V \in V$ and binary operations $+: V \times V \rightarrow V$ and $\cdot: \mathbb{F} \times V \rightarrow V$ such that:
+	- $(V, +, 0)$ is an abelian group
+	- Scalar multiplication is associative and distributive
+- A **subspace** is a subset of a vector space that is closed under the two operations
+- A **linear map** between to vector spaces $V, W$ (over the same field) is a function $f: V \rightarrow W$ such that:
+	- $f(av) = a \cdot f(v)$
+	- $f(v + v') = f(v) + f(v')$
+- A **basis** of a finite vector space is an *ordered* set of **linearly independent** vector space elements which **span** the entire vector space. All bases have the same number of elements which is called the **dimension** of the vector space.
+	- => Any finite vector space for dimension $n$ is isomorphic to $\mathbb{F}^n$, representing each element as a linear combination of its basis vectors.
+# Projective Coordinates
+- The **projective line** $\mathbb{P}^1_{\mathbb{K}}$ over a field $\mathbb{K}$ is the quotient set of the **punctured affine plane** $\mathbb{K} \times \mathbb{K} \setminus \{(0, 0\}$ by the equivalence relation $\forall \lambda \in \mathbb{K} \setminus \{0\} (x, y) \sim \lambda (x, y)$
+- The **projective plane** is defined as $\mathbb{P}^2_{\mathbb{K}} = \mathbb{K}^3 \setminus \{(0, 0, 0)\} / \sim$
+- The equivalence class of a point $(x, y, z)$ is denoted by $(x : y : z)$
+- ...
+# Reed-Solomon error-correcting codes
+- **Alphabet**: Finite set $\Sigma$ of size $q$
+- **Hamming distance** of two strings $x, y \in \Sigma^n$: $\Delta(x, y) = |\{i \in [n]: x_i \neq y_i\}|$
+- **$(n, k, d)$ code**: Functions $E: \Sigma^k \rightarrow \Sigma^n, D: \Sigma^n \rightarrow \Sigma^k$ such that for all $u \in \Sigma^k, w \in \Sigma^n$ with $\Delta(E(u), w) \leq e$, we have $D(w) = u$
+	- **Rate**: $R = k / n$
+	- **Relative distance**: $\delta = d / n$
+- **Singleton bound**: For any code, $R + \delta \leq 1 + 1/ n$
+- **Maximum distance separable (MDS) code**: A code that meets the singleton bound with equality
+- A **linear code** $\mathcal{C}$ is a code that is a $k$-dimensional subspace of $\mathbb{F}_q^n$
+	- $\implies$ $\Delta$ satisfies the triangle equality
+- 
+
 # Errors?
 - Example 5.15: How can 2 times 2 be 0? Then $(\mathbb{F} \setminus 0, \cdot, 1)$ would not be a group?
 - Example 5.60: The factor should be $(x^2 + \sqrt{2})$?
+- Misspelling of "Fanu plane"
