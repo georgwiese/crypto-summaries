@@ -1,1 +1,0 @@
-Goldberg, Papini, Riabzev ([Link](https://eprint.iacr.org/2021/1063.pdf))

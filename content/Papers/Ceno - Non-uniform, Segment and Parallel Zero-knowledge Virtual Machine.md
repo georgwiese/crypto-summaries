@@ -9,7 +9,7 @@ While this system was designed with GKR in mind, the core concepts translate to 
 ### GKR Circuit Structure
 
 This Figure describes the structure of the circuits:
-![[Screenshot 2024-08-22 at 11.03.53.png]]
+![[ceno_basic_layout.png]]
 There is one layered arithmetic circuit for each instruction, consisting of three parts:
 - **Input Layer**: For each execution of the given instruction, the committed data needed to execute it including:
 	- A *input state record* $s_{in} = (pc_{in}, clk_{in}, top_{in})$, to denote the value of the program counter, clock and stack pointer before the instructions
