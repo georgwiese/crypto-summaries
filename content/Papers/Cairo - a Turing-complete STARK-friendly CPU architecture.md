@@ -1,12 +1,12 @@
-Goldberg, Papini, Riabzev ([Link](https://eprint.iacr.org/2021/1063.pdf))
+*Goldberg, Papini, Riabzev ([Link](https://eprint.iacr.org/2021/1063.pdf))*
 # Design principles
 - **Nondeterministic read-only memory**: Each memory cell can only have one value during the entire computation
 	- One way to think of it is that the prover can choose the entire memory content, and the program asserts certain relationships among memory cells
 	- This makes it trivial to pass prover hints: They simply become memory reads
-	- -> There is no need to keep track of time stamps, since the value of a memory cell is independent of the time stamp
+	- There is no need to keep track of time stamps, since the value of a memory cell is independent of the time stamp
 	- The verifier has a *partial memory function* and can verify it in linear time
 	- The accessed memory cells need to form a contiguous region, and its size can be up to the number of cycles
-- **Machine words = field elements**: They assume that the field has >63 bits (which suggests that the paper might be out of date, because M31 (used in stwo) is smaller...)
+- **Machine words = field elements**: They assume that the field has > 63 bits (which suggests that the paper might be out of date, because M31 (used in stwo) is smaller...)
 - **von Neumann architecture**: Code and data live in the same memory
 	- -> The "PC lookup" becomes as memory read
 	- Most instructions are encoded in a single word (using 63 bits). If the instruction has an immediate value, it is stored in a separate word
@@ -43,7 +43,7 @@ All Cairo instructions can be implemented using this encoding.
 
 ## Calling convention
 - `call` instruction:
-	- Updates the PC similar to the `jmp` instruction
+	- Updates the PC, similar to the `jmp` instruction
 	- Stores the previous value of `fp` to `[ap]`
 	- Stores the return address to `[ap + 1]`
 	- Advances the `ap` by 2
@@ -75,4 +75,13 @@ Cairo does not natively support read/write memory, but it can be emulated by:
 
 For details, refer to section 8.5.
 ## AIR constraints
-TODO
+- The *trace length* is $L = 16N$ (where $N$ is the number of time steps + 1). A column can consist of several ***virtual subcolumns*** (e.g. all entries $i$ where $i\ \%\ 16 == 3$ are one subcolumn)
+	- This allows them to reduce the number of constraints, which reduces verifier time. For example, a range constraints can apply to an entire column, covering several virtual subcolumns.
+- Besides that, the core of the VM is implemented using pretty straight-forward polynomial constraints, not covered here
+- **Write-once memory** is implemented by:
+	- Committing to a permutation of memory accesses $(address, value)$ (verified by a permutation check)
+	- Asserting that addresses are sorted (increments by $0$ or $1$)
+	- Asserting that values only change if there is an address change
+- **Public Memory**:
+	- The verifier knows a *partial memory function*, which is just a list of (sparse) $(address, value)$ pairs.
+	- They can (in linear time) "add" these accesses to the accumulator. The existing memory arguments ensures that they are consistent with the full memory function.
