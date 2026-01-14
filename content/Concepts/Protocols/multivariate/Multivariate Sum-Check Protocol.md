@@ -4,3 +4,5 @@ H := \sum_{b_1 \in \{0, 1\}} \sum_{b_2 \in \{0, 1\}} ... \sum_{b_v \in \{0, 1\}}
 $$
 The advantage of using the protocol is that the verifier runtime is only $O(v)$ plus the time to evaluate $g$ at a single input in $\mathbb{F}^v$.
 ![[multivariate_sum_check.png]]
+## Implementations
+- [[Speeding Up Sum-Check Proving]]
