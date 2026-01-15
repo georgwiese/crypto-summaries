@@ -26,3 +26,15 @@ Notes:
 Notes on performance:
 - In each round, the main memory usage is $d$ size-$2^{l - i}$ field elements. Note that in practice, these field elements are usually *small* in the first round and *large* after (because they depend on a random challenge).
 - The number of multiplications halves in each round, but from round 2, the multiplications are between *large* field elements.
+# Algorithm 2: Quasilinear time & square-root space
+The core idea of this algorithm is that the terms $p_k(r_{[1:i]}, u, x')$ (where $r_{[1:i]} \in \mathbb{F}^{i - 1}$, $u \in \widehat{U_d}$, $x' \in \{0, 1\}^{l - i}$) can also be computed directly from the evaluation form of $p_k$:
+![[speeding_up_sumcheck_alg2.png]]
+Notes:
+- The evaluation form of polynomials $p_k$ can be accessed sequentially. This enables a *streaming prover*: Witness generation is re-run for each of the first $l / 2$ sum-check rounds; the prover never has to store the entire witness.
+- The $\widetilde{eq}(\cdot, \cdot)$ terms can be computed in linear time. The time and space needed is $2^{i-1}$, i.e., at round $l / 2$, this array will have $2^{l / 2 - 1} = \sqrt{2^l/ 2}$ elements.
+- After $l / 2$ rounds, the prover switches to Algorithm 1. At this point, the arrays $P_k^{(l + 1)}$ contain $2^{l / 2} = \sqrt{2^l}$ elements.
+
+Notes on performance:
+- Memory usage is $O(\sqrt{2^l})$
+- The inner product is between a large field element (the $\widetilde{eq}(r_{[<i]}, b)$ term) and a small field element (the $p_k(b, u, x')$)
+- The outer product is between large field elements (after round 1)
