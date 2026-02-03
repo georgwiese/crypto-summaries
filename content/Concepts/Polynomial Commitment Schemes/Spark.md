@@ -4,6 +4,8 @@
 - (Originally described as part of [[Spartan]])
 - [generalized CCS backend / DSL proposal](https://hackmd.io/@levs57/By2yBLefJe): Nice blog post by Lev Soukhanov
 
+*See also: [[Jagged Polynomial Commitments]] for a specialized sparse PCS optimized for zkVM multi-table traces.*
+
 **Use-case**: In [[Spartan]], we need to commit to the *sparse* R1CS matrices, which are of size $N = M^2$, but only have $m \in \Theta(M)$ non-zero entries. They achieve a quadratic speed-up over using a dense commitment scheme.
 
 **Representing sparse polynomials with dense polynomials**: Any $(\log N)$-variate multilinear polynomial $D$ can be written as:
