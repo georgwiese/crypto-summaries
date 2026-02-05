@@ -28,7 +28,7 @@ where $g(a, b, c, d) = 1$ iff $b = a + c \land b < d$.
 
 ### Branching Program for $g$
 
-Width-4 [[Read-Once Branching Program]] with 2-bit state $(\text{carry}, \text{lt})$. Processes inputs LSB-first, reading $(a_i, b_i, c_i, d_i)$ at each step:
+Width-4 [[Read-Once Branching Program]] (ROBP) with 2-bit state $(\text{carry}, \text{lt})$. Processes inputs LSB-first, reading $(a_i, b_i, c_i, d_i)$ at each step:
 1. Reject if $\text{LSB}(a_i + c_i + \text{carry}) \neq b_i$
 2. $\text{carry} \leftarrow \text{MSB}(a_i + c_i + \text{carry})$
 3. $\text{lt} \leftarrow (d_i > b_i) \lor (d_i = b_i \land \text{lt})$
@@ -44,6 +44,28 @@ Width-4 [[Read-Once Branching Program]] with 2-bit state $(\text{carry}, \text{l
 Result: $g = 1$ ✓
 
 For any computation that can be described using a low-width branching program, there is an efficient algorithm to compute its multilinear extension.
+
+#### Jagged assist
+Note that the verifier needs to run a branching program for *each of the $2^k$ columns*, with the same evaluation point but different heights.
+Jagged assist is a protocol to delegate this work to the prover and reduce the verifier's work to one evaluation
+
+## Batch Evaluation
+
+**Goal**: Prove $k$ evaluations $\hat{h}(z_0) = v_0, \ldots, \hat{h}(z_{k-1}) = v_{k-1}$ with cost close to a single evaluation.
+
+1. Verifier sends random weights $\alpha_0, \ldots, \alpha_{k-1}$
+2. Rewrite as a single sum-check:
+$$\sum_{b \in \{0,1\}^m} \hat{h}(b) \cdot \underbrace{\sum_j \alpha_j \cdot \widetilde{eq}(b, z_j)}_{S(b)} = \sum_j \alpha_j v_j$$
+3. At the end, verifier has random $\rho$ and needs:
+   - $\hat{h}(\rho)$ — one query to underlying PCS
+   - $S(\rho) = \sum_j \alpha_j \cdot \widetilde{eq}(\rho, z_j)$ — computed directly in $O(k \cdot m)$
+
+| | Single eval | $k$ evals (batched) |
+|---|---|---|
+| Sum-check rounds | $m$ | $m$ |
+| Oracle queries | 1 | 1 |
+
+Batching amortizes the cost of computing $\hat{f}_t$ across all $k$ evaluations.
 
 ## Efficiency
 

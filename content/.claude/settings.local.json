@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "WebFetch(domain:eprint.iacr.org)"
+      "WebFetch(domain:eprint.iacr.org)",
+      "WebFetch(domain:blog.lambdaclass.com)",
+      "WebFetch(domain:blog.succinct.xyz)",
+      "WebFetch(domain:www.binius.xyz)"
     ]
   }
 }

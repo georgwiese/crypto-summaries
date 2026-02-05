@@ -17,6 +17,12 @@ Personal knowledge base for zero-knowledge cryptography, as an Obsidian vault.
 - Before doing ANY task, read the ENTIRE vault to have context
 - Continue the existing style, formatting, and reuse notation as much as possible
 
+## Research behavior
+
+- When summarizing papers, ALWAYS read the primary source first. If you can't access it, say so immediately and ask for a local copy.
+- Don't build explanations from secondary sources (blogs, summaries) without explicitly stating that's what you're doing.
+- Default to concise explanations. Expand only when asked.
+
 ## Summarizing papers
 You'll be asked to read relevant papers. Introduce a markdown file in `Papers/`, but if you need to explain a new concept that might be relevant for any other paper, extract it to `Concepts/` and link to it from the paper notes.
 
@@ -38,4 +44,4 @@ When there is a conversation where you want to answer with a lot of math content
 
 When asked to deploy, 
 - Do `git status` and `git diff` to make sure there are no unintended changes. Especially, remove any temporary files like `Temp.md`.
-- run `npx quartz sync`. This adds any non-ignored files, commits and pushes, which triggers the deployment.
+- run `npx quartz sync` from `..`. This adds any non-ignored files, commits and pushes, which triggers the deployment.
