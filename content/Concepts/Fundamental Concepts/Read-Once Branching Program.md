@@ -13,7 +13,9 @@ Process the branching program **backwards** (from sinks to source), computing th
 1. **Base case**: For each sink vertex $v$ with label $\alpha$, set $\hat{f}_v = \alpha$
 
 2. **Inductive step**: For vertex $v$ in layer $i$:
-$$\hat{f}_v(\zeta, z) = \sum_{\sigma \in \{0,1\}^b} \widetilde{eq}(\zeta, \sigma) \cdot \hat{f}_{\Gamma(v,\sigma)}(z)$$
+$$
+\hat{f}_v(\zeta, z) = \sum_{\sigma \in \{0,1\}^b} \widetilde{eq}(\zeta, \sigma) \cdot \hat{f}_{\Gamma(v,\sigma)}(z)
+$$
    where $\Gamma(v, \sigma)$ is the vertex reached by following edge $\sigma$ from $v$.
 
 3. **Result**: $\hat{f}(z) = \hat{f}_{\text{source}}(z)$

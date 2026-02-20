@@ -7,7 +7,7 @@ Jolt is a RISC-V zkVM built around sum-check and lookup arguments: **J**ust **O*
 
 *Source: [Jolt Book - Bytecode](https://jolt.a16zcrypto.com/how/architecture/bytecode.html)*
 
-![[jolt_imgs/bytecode.png]]
+![[bytecode.png]]
 
 During preprocessing, the ELF binary is decoded into a table of instructions. Each entry is a tuple:
 
@@ -53,14 +53,18 @@ Register read/write correctness is proven using [[Twist and Shout|Twist]] with $
 *Source: [Jolt Book - Instruction Execution](https://jolt.a16zcrypto.com/how/architecture/instruction_execution.html)*
 
 The key insight of Jolt: **instruction execution is a single giant lookup**. For each instruction, the two 64-bit operands $(x, y)$ form the lookup index, and the table returns the correct output. Their bits are interleaved:
-$$(k_1, k_2, \ldots, k_{128}) = (x_1, y_1, x_2, y_2, \ldots, x_{64}, y_{64})$$
+$$
+(k_1, k_2, \ldots, k_{128}) = (x_1, y_1, x_2, y_2, \ldots, x_{64}, y_{64})
+$$
 
 This gives a table of size $K = 2^{128}$, which obviously cannot be materialized.
 
 ### Prefix-Suffix Decomposition
 
 The trick: for many instructions, the table's MLE has **prefix-suffix structure** (Appendix A of [Proving CPU Executions in Small Space](https://eprint.iacr.org/2025/105)). A multilinear polynomial $\widetilde{a}(x_1, \ldots, x_n)$ has prefix-suffix structure for cutoff $i$ with $k$ terms if:
-$$\widetilde{a}(x_1, \ldots, x_n) = \sum_{j=1}^{k} \text{prefix}_j(x_1, \ldots, x_i) \cdot \text{suffix}_j(x_{i+1}, \ldots, x_n)$$
+$$
+\widetilde{a}(x_1, \ldots, x_n) = \sum_{j=1}^{k} \text{prefix}_j(x_1, \ldots, x_i) \cdot \text{suffix}_j(x_{i+1}, \ldots, x_n)
+$$
 
 The **prefix-suffix inner product protocol** exploits this to run the sum-check $\sum_x \widetilde{u}(x) \cdot \widetilde{a}(x)$ (where $u$ is the sparse one-hot address) without ever materializing the $2^{128}$-entry table. It proceeds in $C$ stages, each handling $n / C$ sum-check rounds:
 1. At each stage, the prover makes a **single pass** over the sparse $u$ to build a small array $Q$ of size $N^{1/C}$ (aggregating suffix contributions).
@@ -75,7 +79,9 @@ SLT maps $(x, y) \mapsto 1$ if $x < y$, else $0$. Recall the index is interleave
 
 The comparison decomposes as: $x < y$ iff the high bits of $x$ are less than those of $y$, OR the high bits are equal and the low bits of $x$ are less than those of $y$:
 
-$$\widetilde{\mathsf{Val}}_{\text{SLT}}(k_{\text{prefix}}, k_{\text{suffix}}) = \text{LT}_{\text{high}}(k_{\text{prefix}}) \cdot 1 + \text{EQ}_{\text{high}}(k_{\text{prefix}}) \cdot \text{LT}_{\text{low}}(k_{\text{suffix}})$$
+$$
+\widetilde{\mathsf{Val}}_{\text{SLT}}(k_{\text{prefix}}, k_{\text{suffix}}) = \text{LT}_{\text{high}}(k_{\text{prefix}}) \cdot 1 + \text{EQ}_{\text{high}}(k_{\text{prefix}}) \cdot \text{LT}_{\text{low}}(k_{\text{suffix}})
+$$
 
 This is $k = 2$ terms. Term 2 has non-trivial factors on **both** sides: whether the suffix matters is gated by the prefix bits being equal. This structure holds at every cutoff boundary (it's the standard recursive definition of lexicographic comparison), so it works for any $C$.
 
@@ -83,7 +89,9 @@ This is $k = 2$ terms. Term 2 has non-trivial factors on **both** sides: whether
 
 XOR is a simpler case. Each output bit depends on a single input bit-pair independently: $x_i \oplus y_i = x_i + y_i - 2x_i y_i$. So the decomposition is purely additive with no cross-boundary interaction:
 
-$$\widetilde{\mathsf{Val}}_{\text{XOR}}(k_{\text{prefix}}, k_{\text{suffix}}) = \text{prefix}_{\text{XOR}}(k_{\text{prefix}}) \cdot 1 + 1 \cdot \text{suffix}_{\text{XOR}}(k_{\text{suffix}})$$
+$$
+\widetilde{\mathsf{Val}}_{\text{XOR}}(k_{\text{prefix}}, k_{\text{suffix}}) = \text{prefix}_{\text{XOR}}(k_{\text{prefix}}) \cdot 1 + 1 \cdot \text{suffix}_{\text{XOR}}(k_{\text{suffix}})
+$$
 
 where $\text{prefix}_{\text{XOR}}$ sums the weighted per-bit XORs for bits in the prefix, and $\text{suffix}_{\text{XOR}}$ does the same for the suffix. This is $k = 2$ but both terms have a trivial factor (constant 1 on one side).
 
@@ -91,7 +99,9 @@ where $\text{prefix}_{\text{XOR}}$ sums the weighted per-bit XORs for bits in th
 
 Since different instructions have different tables, a boolean **lookup table flag** $\mathsf{flag}_\ell(j)$ (fetched from the bytecode) indicates which table is active at cycle $j$. The multiplexed read-checking sum-check becomes:
 
-$$\widetilde{\mathsf{rv}}(r_{\text{cycle}}) = \sum_{k, j} \widetilde{\mathsf{eq}}(r_{\text{cycle}}, j) \cdot \left(\prod_{i=1}^{d} \widetilde{\mathsf{ra}}_i(k_i, j)\right) \cdot \left(\sum_\ell \mathsf{flag}_\ell(j) \cdot \widetilde{\mathsf{Val}}_\ell(k)\right)$$
+$$
+\widetilde{\mathsf{rv}}(r_{\text{cycle}}) = \sum_{k, j} \widetilde{\mathsf{eq}}(r_{\text{cycle}}, j) \cdot \left(\prod_{i=1}^{d} \widetilde{\mathsf{ra}}_i(k_i, j)\right) \cdot \left(\sum_\ell \mathsf{flag}_\ell(j) \cdot \widetilde{\mathsf{Val}}_\ell(k)\right)
+$$
 
 In practice, $d = 16$ for instruction execution, giving $K^{1/d} = 2^{128/16} = 2^8 = 256$ (i.e., each of the 16 one-hot chunks has 256 entries). The sum-check degree per round is $d + 1 = 17$. Jolt uses techniques from Karatsuba/Toom-Cook to optimize the degree-17 polynomial evaluations.
 
@@ -99,9 +109,13 @@ In practice, $d = 16$ for instruction execution, giving $K^{1/d} = 2^{128/16} = 
 
 The R1CS constraints need the *dense* operand values (as field elements), not one-hot encodings. These are recovered via **raf-evaluation sum-checks** (see [[Twist and Shout]], "Recovering dense addresses"]]). For two interleaved operands:
 
-$$\mathsf{LeftOperand}(r) = \sum_{k,j} \widetilde{\mathsf{eq}}(r,j) \cdot \widetilde{\mathsf{ra}}(k,j) \cdot \sum_{\ell=0}^{\log(K)/2-1} 2^\ell \cdot k_{2\ell}$$
+$$
+\mathsf{LeftOperand}(r) = \sum_{k,j} \widetilde{\mathsf{eq}}(r,j) \cdot \widetilde{\mathsf{ra}}(k,j) \cdot \sum_{\ell=0}^{\log(K)/2-1} 2^\ell \cdot k_{2\ell}
+$$
 
-$$\mathsf{RightOperand}(r) = \sum_{k,j} \widetilde{\mathsf{eq}}(r,j) \cdot \widetilde{\mathsf{ra}}(k,j) \cdot \sum_{\ell=0}^{\log(K)/2-1} 2^\ell \cdot k_{2\ell+1}$$
+$$
+\mathsf{RightOperand}(r) = \sum_{k,j} \widetilde{\mathsf{eq}}(r,j) \cdot \widetilde{\mathsf{ra}}(k,j) \cdot \sum_{\ell=0}^{\log(K)/2-1} 2^\ell \cdot k_{2\ell+1}
+$$
 
 These extract the even-indexed bits (left operand $x$) and odd-indexed bits (right operand $y$) respectively. The resulting dense values are fed into the R1CS constraints for linking.
 

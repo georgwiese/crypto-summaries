@@ -15,14 +15,18 @@ A **jagged function** $p: \{0,1\}^n \times \{0,1\}^k \to \mathbb{F}$ has heights
 **Commitment**: Commit to dense $\hat{q}$, send heights $(t_y)$ in clear.
 
 **Evaluation** of $\hat{p}(z_r, z_c) = v$: Run [[Multivariate Sum-Check Protocol]] on
-$$v = \sum_{i \in \{0,1\}^m} \hat{q}(i) \cdot \hat{f}_t(z_r, z_c, i)$$
+$$
+v = \sum_{i \in \{0,1\}^m} \hat{q}(i) \cdot \hat{f}_t(z_r, z_c, i)
+$$
 where $f_t(z_r, z_c, i) = 1$ iff $\text{row}_t(i) = z_r$ and $\text{col}_t(i) = z_c$.
 
 Reduces to: one claim on $\hat{q}$ (to underlying PCS) + one claim on $\hat{f}_t$ (verifier computes directly).
 
 ## Computing $\hat{f}_t$
 
-$$\hat{f}_t(z_r, z_c, i) = \sum_{y \in \{0,1\}^k} \widetilde{eq}(z_c, y) \cdot \hat{g}(z_r, i, t_{y-1}, t_y)$$
+$$
+\hat{f}_t(z_r, z_c, i) = \sum_{y \in \{0,1\}^k} \widetilde{eq}(z_c, y) \cdot \hat{g}(z_r, i, t_{y-1}, t_y)
+$$
 
 where $g(a, b, c, d) = 1$ iff $b = a + c \land b < d$.
 
@@ -55,7 +59,9 @@ Jagged assist is a protocol to delegate this work to the prover and reduce the v
 
 1. Verifier sends random weights $\alpha_0, \ldots, \alpha_{k-1}$
 2. Rewrite as a single sum-check:
-$$\sum_{b \in \{0,1\}^m} \hat{h}(b) \cdot \underbrace{\sum_j \alpha_j \cdot \widetilde{eq}(b, z_j)}_{S(b)} = \sum_j \alpha_j v_j$$
+$$
+\sum_{b \in \{0,1\}^m} \hat{h}(b) \cdot \underbrace{\sum_j \alpha_j \cdot \widetilde{eq}(b, z_j)}_{S(b)} = \sum_j \alpha_j v_j
+$$
 3. At the end, verifier has random $\rho$ and needs:
    - $\hat{h}(\rho)$ — one query to underlying PCS
    - $S(\rho) = \sum_j \alpha_j \cdot \widetilde{eq}(\rho, z_j)$ — computed directly in $O(k \cdot m)$

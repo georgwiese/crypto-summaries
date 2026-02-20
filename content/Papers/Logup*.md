@@ -14,7 +14,9 @@ Goal: evaluate the *pullback* $(I^*T)[i] := T[I[i]]$ at a random point $r$, with
 
 The dual of the pullback. Given $I: \{0, \ldots, n-1\} \to \{0, \ldots, m-1\}$ and $A \in \mathbb{F}^n$:
 
-$$I_*A[j] = \sum_{i \mid I[i] = j} A[i]$$
+$$
+I_*A[j] = \sum_{i \mid I[i] = j} A[i]
+$$
 
 **Duality lemma**: $\langle I_*A, B \rangle = \langle A, I^*B \rangle$.
 
@@ -22,7 +24,9 @@ $$I_*A[j] = \sum_{i \mid I[i] = j} A[i]$$
 
 Trade the pullback for a pushforward using the duality lemma:
 
-$$I^*T(r) = \langle I^*T, \mathsf{eq}_r \rangle = \langle T, I_*\mathsf{eq}_r \rangle$$
+$$
+I^*T(r) = \langle I^*T, \mathsf{eq}_r \rangle = \langle T, I_*\mathsf{eq}_r \rangle
+$$
 
 where $\mathsf{eq}_r \in \mathbb{F}_{\text{ext}}^n$ is the vector of Lagrange basis evaluations at $r$.
 
@@ -33,7 +37,9 @@ where $\mathsf{eq}_r \in \mathbb{F}_{\text{ext}}^n$ is the vector of Lagrange ba
 
 **Well-formedness** of $I_*\mathsf{eq}_r$ is proven via [[GKR]], using a [[LogUp & cq|LogUp]]-style fractional sum:
 
-$$\sum_{0 \le i < n} \frac{\mathsf{eq}_r[i]}{c - I[i]} = \sum_{0 \le j < m} \frac{I_*\mathsf{eq}_r[j]}{c - j}$$
+$$
+\sum_{0 \le i < n} \frac{\mathsf{eq}_r[i]}{c - I[i]} = \sum_{0 \le j < m} \frac{I_*\mathsf{eq}_r[j]}{c - j}
+$$
 
 The verifier can evaluate $\widetilde{\mathsf{eq}}_r$ by itself, so no commitment to it is needed.
 

@@ -11,7 +11,7 @@ Personal knowledge base for zero-knowledge cryptography, as an Obsidian vault.
 ## Content Guidelines
 
 - Notes use Obsidian-flavored markdown with `[[wikilinks]]`
-- Math uses LaTeX: `$inline$` and `$$block$$`
+- Math uses LaTeX: `$inline$` and `$$block$$`. Block math must have newlines after the opening `$$` and before the closing `$$`
 - Keep notes atomic and interlinked
 - DON'T DUPLICATE, link to existing notes whenever possible or introduce new notes for new concepts
 - When creating a new page, search existing pages for unlinked mentions of the new topic and add `[[wikilinks]]` to the first occurrence per page
