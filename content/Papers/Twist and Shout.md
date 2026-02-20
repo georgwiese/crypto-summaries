@@ -61,7 +61,9 @@ Given commitments to $\widetilde{\mathsf{ra}}$, $\widetilde{\mathsf{wa}}$, and $
 ### Sum-checks
 
 **Val-evaluation sum-check**: $\mathsf{Val}(k, j)$ is the sum of all prior increments to cell $k$:
-$$\widetilde{\mathsf{Val}}(r_{\text{addr}}, r_{\text{cycle}}) = \sum_{j' \in \{0,1\}^{\log T}} \widetilde{\mathsf{Inc}}(j') \cdot \widetilde{\mathsf{wa}}(r_{\text{addr}}, j') \cdot \widetilde{\mathsf{LT}}(j', r_{\text{cycle}})$$
+$$
+\widetilde{\mathsf{Val}}(r_{\text{addr}}, r_{\text{cycle}}) = \sum_{j' \in \{0,1\}^{\log T}} \widetilde{\mathsf{Inc}}(j') \cdot \widetilde{\mathsf{wa}}(r_{\text{addr}}, j') \cdot \widetilde{\mathsf{LT}}(j', r_{\text{cycle}})
+$$
 where $\mathsf{LT}(j', j) = 1$ iff $\mathsf{int}(j') < \mathsf{int}(j)$. At the end, the verifier needs evaluations of $\widetilde{\mathsf{Inc}}$ and $\widetilde{\mathsf{wa}}$ (from commitments) and $\widetilde{\mathsf{LT}}$ (computable in $O(\log T)$ time).
 
 **Read-checking sum-check**:  Like Shout, but summing over both $k$ and $j$ since $\mathsf{Val}$ is time-varying:
