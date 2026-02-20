@@ -107,6 +107,30 @@ These extract the even-indexed bits (left operand $x$) and odd-indexed bits (rig
 
 For instructions with a single operand (e.g., range checks), the index is not interleaved: the first 64 bits are zero-padded, and only `RightOperand` is non-trivial.
 
+## Committed Polynomials (according to Claude)
+
+All committed polynomials are opened via [[Dory]], which has "pay-per-bit" costs: boolean entries (the one-hot 1s) are much cheaper to commit than full field elements.
+
+| Polynomial | Component | Hypercube size | Non-zero entries | Entry type |
+|---|---|---|---|---|
+| $\widetilde{\mathsf{ra}}_1, \ldots, \widetilde{\mathsf{ra}}_{16}$ | Instruction exec (Shout) | $2^8 \times T$ each | $T$ each (sparse) | Boolean |
+| $\widetilde{\mathsf{ra}}_1, \ldots, \widetilde{\mathsf{ra}}_d$ | Bytecode (Shout) | $P^{1/d} \times T$ each | $T$ each (sparse) | Boolean |
+| $\widetilde{\mathsf{ra}}_1, \ldots, \widetilde{\mathsf{ra}}_d$ | RAM (Twist) | $K^{1/d} \times T$ each | $\leq T$ each (sparse) | Boolean |
+| $\widetilde{z}$ | Spartan (R1CS witness) | $W \times T$ | Dense | Field elements |
+| $\widetilde{\mathsf{Inc}}$ | Registers (Twist) | $T$ | Dense | Field elements |
+Parameters:
+- **Instruction execution**: $d = 16$, $K^{1/d} = 2^8 = 256$. This is the largest commitment: $16T$ boolean entries total.
+- **Bytecode**: $d$ depends on program size $P$ (not a fixed constant).
+- **RAM**: $K^{1/d} = 2^4$ or $2^8$ depending on $T$. Only $\mathsf{ra}$ (no separate $\mathsf{wa}$) since RV64IMAC does at most one memory operation per cycle.
+- **Spartan**: $W$ is the number of R1CS variables per cycle (exact value unknown).
+- **Advice**: Not separately committed polynomials. They are folded into the RAM initial state polynomial $\mathsf{ram\_init}$. "Trusted" advice has an externally-generated commitment; "untrusted" advice is committed by the prover. Both occupy the lowest addresses in the RAM table.
+
+### Uncertain / needs verification
+
+- **Register $\mathsf{ra}$ / $\mathsf{wa}$**: The register addresses are derived from bytecode (see "no separate one-hot checks" above). This suggests they are **virtual** (not committed), meaning the register Twist only commits to $\mathsf{Inc}$. But the docs are not fully explicit.
+- **RAM $\mathsf{Inc}$**: The architecture overview lists it as committed, but the RAM-specific page describes it as virtual (proven through sum-checks). Unclear which is correct.
+- **RAM $\mathsf{wa}$**: With one memory op per cycle, there may be a single merged address polynomial rather than separate $\mathsf{ra}$ / $\mathsf{wa}$.
+
 # TODO
 - How Spartan R1CS glues the components (~20 constraints/cycle, PC updates, linking)
 - RAM (Twist instance, memory layout, output verification)
