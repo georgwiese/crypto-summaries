@@ -10,7 +10,8 @@
       "Bash(find:*)",
       "Bash(pdftotext:*)",
       "WebFetch(domain:a16zcrypto.com)",
-      "WebFetch(domain:jolt.a16zcrypto.com)"
+      "WebFetch(domain:jolt.a16zcrypto.com)",
+      "Bash(curl:*)"
     ]
   }
 }
