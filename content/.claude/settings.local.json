@@ -12,7 +12,10 @@
       "WebFetch(domain:a16zcrypto.com)",
       "WebFetch(domain:jolt.a16zcrypto.com)",
       "Bash(curl:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(gh api:*)",
+      "Bash(bash ~/.claude/skills/export-mdbook/export.sh:*)",
+      "Bash(gh repo list:*)"
     ]
   }
 }
