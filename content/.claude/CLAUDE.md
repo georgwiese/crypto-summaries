@@ -14,6 +14,7 @@ Personal knowledge base for zero-knowledge cryptography, as an Obsidian vault.
 - Math uses LaTeX: `$inline$` and `$$block$$`
 - Keep notes atomic and interlinked
 - DON'T DUPLICATE, link to existing notes whenever possible or introduce new notes for new concepts
+- When creating a new page, search existing pages for unlinked mentions of the new topic and add `[[wikilinks]]` to the first occurrence per page
 - Before doing ANY task, read the ENTIRE vault to have context
 - Continue the existing style, formatting, and reuse notation as much as possible
 

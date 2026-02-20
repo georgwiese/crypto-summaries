@@ -1,6 +1,6 @@
 [Speeding Up Sum-Check Proving (Bagad et al.)](https://eprint.iacr.org/2025/1117)
 
-**TLDR:** Recaps existing proving algorithms, introduces new algorithm to (1) trade off multiplications between *large* field elements (expensive) for multiplications between *small* field elements cheap, and (2) optimize for the common case where $g$ has $\widetilde{eq}(r, X)$ as one of its factors, as common in [[Spartan]] and Jolt.
+**TLDR:** Recaps existing proving algorithms, introduces new algorithm to (1) trade off multiplications between *large* field elements (expensive) for multiplications between *small* field elements cheap, and (2) optimize for the common case where $g$ has $\widetilde{eq}(r, X)$ as one of its factors, as common in [[Spartan]] and [[Jolt]].
 
 ![[speeding_up_sumcheck_summary.png]]
 # Algorithm 1: Linear time & space prover

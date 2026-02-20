@@ -1,7 +1,7 @@
 [ePrint 2025/105](https://eprint.iacr.org/2025/105) | Srinath Setty, Justin Thaler, 2025
 [Jolt docs](https://jolt.a16zcrypto.com/how/twist-shout.html) | [a16z blog post](https://a16zcrypto.com/posts/article/introducing-twist-and-shout/) | [zkSummit 13 talk](https://www.youtube.com/watch?v=nEEFjyTK8OI)
 
-Replacements for [[Lasso]] and Spice ([[Offline Memory Checking]]) in Jolt, based purely on the [[Multivariate Sum-Check Protocol]]. No grand product arguments.
+Replacements for [[Lasso]] and Spice ([[Offline Memory Checking]]) in [[Jolt]], based purely on the [[Multivariate Sum-Check Protocol]]. No grand product arguments.
 - **Shout**: Read-only memory (a.k.a. lookup arguments)
 - **Twist**: Read/write memory
 
@@ -22,6 +22,8 @@ The prover commits only to $\widetilde{\mathsf{ra}}$ (the one-hot addresses). Th
 ### Committing to $\widetilde{\mathsf{ra}}$
 
 They use an Elliptic Curve based commitment scheme, so the commitment cost for $\widetilde{\mathsf{ra}}$ is only proportional to $T$ (just one group operation per bit). On top of this, the one-hot property has to be proven, by proving booleanity of all the entries and proving that the sum along the memory dimension is 1.
+
+See [[Twist and Shout via logup*]] for alternative ways to commit to $\widetilde{\mathsf{ra}}$, applicable to hash-based commitments.
 ### Parameter $d$: splitting the one-hot encoding
 
 **Motivation**: The commitment key has $K \cdot T$ entries, which is a problem for large memories. Also, the evaluation proofs become more expensive, but I skipped the details of that.

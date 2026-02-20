@@ -60,7 +60,7 @@ Version: July 18, 2023
 - Goal: turn arbitrary programs running on a **Random Access Machine (RAM)** (memory + registers + instructions + PC) in $T$ steps into arithmetic circuits
 - Preliminary techniques:
 	- **Evaluate step-by-step**: In each layer, list the *entire machine configuration* (e.g. representing each memory cell as 64 binary field elements) and repeatedly apply a sub-circuit that performs one computations step
-		- Unusable in the context of GKR, because the number of layers (and hence verifier time) is $\Theta(T)$
+		- Unusable in the context of [[GKR]], because the number of layers (and hence verifier time) is $\Theta(T)$
 		- Massive circuit, because each memory cell is repeated in each step
 	- **Turning small-space programs into shallow circuits**: If the program uses little space the *configuration graph* is small and can be represented using an adjacency matrix. Running the machine for $n$ steps is equivalent to squaring the matrix $\log n$ times.
 - **Circuit satisfiability problem**: There *exists* a witness $w$ such that $C(x, w) = y$
@@ -99,7 +99,7 @@ Version: July 18, 2023
 			- The witness contains the bit representations of each $e_i \in \{0, 1\}^{\log_2N}$, and an arithmetic circuit of $O(B \log N)$ gates computes for a challenge point $r$:
 			  $\prod_{i = 1}^B\prod_{j = 1}^{\log_2N}(r - s_i)^{2^j \cdot e_{i, j}}$ 
 	- Gabizon & Williamson (2020, Plookup):
-		- Simplified variant due to Cairo: All elements appear at least once and the lookup table covers a contiguous interval
+		- Simplified variant due to [[Cairo - a Turing-complete STARK-friendly CPU architecture|Cairo]]: All elements appear at least once and the lookup table covers a contiguous interval
 		- Witness sequence $\{w_1, ..., w_n\}$ is claimed to equal $\{f_1, ..., f_N\}$ in sorted order
 		- To show:
 			- $\{w_1, ..., w_n\}$ is a permutation of $\{f_1, ..., f_N\}$
@@ -125,7 +125,7 @@ Version: July 18, 2023
 ## Chapter 8: MIPs and Succinct Arguments
 - **Multi-prover interactive proof**: Instead of one prover, we have *multiple*, which are not allowed to communicate after the start of the protocol (otherwise, they could be simulated with just one prover)
 	- In practice, they only use the second prover to model a PCS!
-- Example: Run GKR, but with a PCS answering the final query on the multilinear extension of the witness!
+- Example: Run [[GKR]], but with a PCS answering the final query on the multilinear extension of the witness!
 - [[Spartan]]
 ## Chapter 9: PCPs and Succinct Arguments
 - **Probabilistically Checkable Proof (PCP)**: The verifier has oracle access to a *static* proof of length $l$, where typically the verifier would query random parts of the proof
@@ -183,7 +183,7 @@ Version: July 18, 2023
 ## Chapter 13: Zero-Knowledge via Commit-And-Prove and Masking Polynomials
 - **Commit-and-prove**:
 	- Setting: Let $C$ be an arithmetic circuit and let the prover make the claim that (s)he knows $w$ such that $C(w) = 1$
-	- The prover sends a Pedersen commitment for each entry of $w$ and the *output of each multiplication gate*
+	- The prover sends a [[Pedersen Commitment]] for each entry of $w$ and the *output of each multiplication gate*
 	- Then, the prover proves knowledge of an opening to these comments
 	- The verifier can on its own derive commitments to outputs of addition gates
 	- For multiplication gates, the prover proves a product relationship between the committed values

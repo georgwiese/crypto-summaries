@@ -5,7 +5,7 @@
 Achieves a verification time independent of the circuit depth!
 
 **Idea**: Instead of committing to the witness, commit to the full *transcript*, i.e., the evaluation of every single gate in the circuit
--> Higher commitment cost than GKR
+-> Higher commitment cost than [[GKR]]
 
 - The prover claims to "hold" an extension $\widetilde{W}$ of a correct transcript.
 - For a circuit of $2^k$ gates, let's define $add, mult, io: \{0, 1\}^{3k} \rightarrow \{0, 1\}$ which takes 3 gate labels $(a, b, c)$ as inputs and output $1$ iff.:

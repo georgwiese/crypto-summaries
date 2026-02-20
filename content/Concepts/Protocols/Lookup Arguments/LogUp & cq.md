@@ -68,7 +68,7 @@ $$
 \forall \vec{x} \in H: h(\vec{x}) = (\sum_{i}\frac{1}{x - f_{A_i}(\vec{x})}) - \frac{m(\vec{x})}{x - f_B(\vec{x})}
 $$
 The problem with this is that the degree of the zero-check expression grows linearly with each column. The paper describes a way to split $h$ into $h_1, ..., h_K$ such that $h = \sum_ih_i$. This decreases the degree, but requires the prover to commit to more polynomials. The ideal value for $K$ depends on the polynomial commitment scheme being used.
-### Fractional sum-check via GKR
+### Fractional sum-check via [[GKR]]
 ([[Improving logarithmic derivative lookups using GKR]])
 
 With this approach, we get rid of the need to commit to the "helper polynomials" $h_i$.
