@@ -14,45 +14,6 @@ What is CUDA?
 - Grids and blocks are 1, 2, or 3 dimensional
 
 **TLDR**: Thread $\in$ Block $\in$ Grid
-### Syntax basics
-- Kernels are C functions which return `void` and are annotated with the `__global__` specifier
-- A common way to launch a kernel is via the **triple chevron notation**, which lets the program pass parameters such as the grid and block dimensions
-
-**Example:**
-```cpp
-__global__ void matAdd(float* A, float* B, float* C, int width, int height)
-{
-    // 2D thread indices
-    int col = threadIdx.x + blockDim.x * blockIdx.x;
-    int row = threadIdx.y + blockDim.y * blockIdx.y;
-
-    // Convert 2D index to 1D index
-    int index = row * width + col;
-
-    // Bounds check
-    if (row < height && col < width) {
-        // Actual computation
-        C[index] = A[index] + B[index];
-    }
-}
-
-int main()
-{
-    ...
-    int width = 32;
-    int height = 32;
-
-    // Total elements = 1024 (32x32)
-    
-    // Block dimension: 16 x 16 (256 threads per block)
-    dim3 threadsPerBlock(16, 16);
-    // Grid dimension: 2 x 2 (4 blocks in the grid)
-    dim3 numBlocks(width / 16, height / 16);
-
-    matAdd<<<numBlocks, threadsPerBlock>>>(A, B, C, width, height);
-    ...
-}
-```
 ### Execution in hardware
 In hardware, the GPU consists of a collection of **Streaming Multiprocessors (SM)**: A collection of cores, with on-chip **registers** and **shared memory**
 ![[gpu_hardware.png]]
@@ -94,6 +55,45 @@ Memory types by scope:
 
 ![[GPU_layout.png]]
 ![[memory_latencies.png]]
+## Syntax basics
+- Kernels are C functions which return `void` and are annotated with the `__global__` specifier
+- A common way to launch a kernel is via the **triple chevron notation**, which lets the program pass parameters such as the grid and block dimensions
+
+**Example:**
+```cpp
+__global__ void matAdd(float* A, float* B, float* C, int width, int height)
+{
+    // 2D thread indices
+    int col = threadIdx.x + blockDim.x * blockIdx.x;
+    int row = threadIdx.y + blockDim.y * blockIdx.y;
+
+    // Convert 2D index to 1D index
+    int index = row * width + col;
+
+    // Bounds check
+    if (row < height && col < width) {
+        // Actual computation
+        C[index] = A[index] + B[index];
+    }
+}
+
+int main()
+{
+    ...
+    int width = 32;
+    int height = 32;
+
+    // Total elements = 1024 (32x32)
+    
+    // Block dimension: 16 x 16 (256 threads per block)
+    dim3 threadsPerBlock(16, 16);
+    // Grid dimension: 2 x 2 (4 blocks in the grid)
+    dim3 numBlocks(width / 16, height / 16);
+
+    matAdd<<<numBlocks, threadsPerBlock>>>(A, B, C, width, height);
+    ...
+}
+```
 ## Synchronization
 ### Between threads in a block
 The `__syncthreads()` barrier in a kernel function achieves synchronization between threads in a block: All threads in a block (=> on the same SM) will execute until that point before any thread continues from there. For example, the implementation can ensure that the shared memory has been initialized properly before it is read.
