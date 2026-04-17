@@ -3,8 +3,9 @@ Sources:
 - [Stanford CS149 I Parallel Computing I 2023 I Lecture 7 - GPU architecture and CUDA Programming](https://www.youtube.com/watch?v=qQTDF0CBoxE)
 - [CUDA Teaching Center (Josh Holloway)](https://www.youtube.com/playlist?list=PLC6u37oFvF40BAm7gwVP7uDdzmW83yHPe)
 
+What is CUDA?
 - **CUDA**: Compute Unified Device Architecture (introduced 2006)
-- Programmed using **C++**, or higher-level DSLs, such as Nvidia Warp or OpenAI Triton
+- Programmed using **C++**, or higher-level DSLs, such as [Nvidia Warp](https://developer.nvidia.com/warp-python) or [OpenAI Triton](https://openai.com/index/triton/)
 ## Programming Model
 
 ### Threads, Blocks and Grids
