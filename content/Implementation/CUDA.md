@@ -64,12 +64,12 @@ In hardware, the GPU consists of a collection of **Streaming Multiprocessors (SM
 
 The **occupancy** of a CUDA kernel is the ratio of the number of active warps to the number of active warps supported by the SM. It might go below 100% because of various hardware constraints, like the maximum number of blocks per SM, the shared memory size, etc.
 ### Warps and SIMT
-Zooming in, each SM consists several **sub-cores**. **32 threads** are grouped into **one warp**. All execution contexts (= register values) are stored on chips, with one register being the PC. Execution happens as follows:
+Zooming in, each SM consists of several **sub-cores**. **32 threads** are grouped into **one warp**. All execution contexts (= register values) are stored on chips, with one register being the PC. Execution happens as follows:
 - In each cycle, the sub-core selects a warp to advance
 - All threads with the same PC are executed in a SIMD fashion
 	- Nvidia calls this **Single-instruction multiple-threads** instead of SIMD, because which threads are run together is decided at runtime (=> those with the same PC)
 	- If threads of a warp have different PCs, this is called **warp divergence** and leads to lower GPU utilization
-- Any given instruction executes in **two cycles**, but different instructions (e.g. integer vs floating point instructions) can overlap
+- Any given instruction executes in **several cycles**, but different instructions (e.g. integer vs floating point instructions) can overlap
 
 ![[v100_sm.png]]
 
@@ -103,17 +103,17 @@ The `cudaDeviceSynchronize()` blocks until all scheduled kernels have completed.
 ![[cuda_streams.png]]
 A **CUDA stream** acts a **work queue** into which programs can add operations, such as memory copies or kernel launches, to be executed in order. If there are multiple streams, they are executed concurrently. Programmers can assign a priority to streams.
 
-Once instantiated, a channel can be passed when launching a kernel using triple chevron notation:
+Once instantiated, a stream can be passed when launching a kernel using triple chevron notation:
 `kernel<<<grid_dim, block_dim, shared_mem_size, stream>>>(...)`
 
 **Synchronization**:
 - The `cudaStreamSynchronize()` function blocks the host until all the work in the stream has been completed.
 - **Events**: More fine-granular control
-	- Events are **markers** can be added to the stream, using `cudaEventRecord(event, stream)`
+	- Events are **markers** that can be added to the stream, using `cudaEventRecord(event, stream)`
 	- The host can block on events using `cudaEventSynchronize(event)`
 ## Memory Performance
-## Coalesced global memory access
-Global memory is accessed via **32-byte memory transactions**. If warps access **consecutive** memory regions, that will be, accesses from many threads can be handled by fewer memory transactions.
+### Coalesced global memory access
+Global memory is accessed via **32-byte memory transactions**. If warps access **consecutive** memory regions, that is, accesses from many threads can be handled by fewer memory transactions.
 
 For example, consider this matrix transpose kernel:
 ![[matrix_transpose_naive.png]]
@@ -122,7 +122,7 @@ The reads are perfectly coalesced, the writes are not.
 This can be fixed by using shared memory:
 ![[matrix_transpose_shared_mem.png]]
 ### Shared memory bank conflicts
-Share memory has 32 banks that are organized such that successive 32-bit word map to successive banks. Each bank has a bandwidth of 32 bits per cycle.
+Shared memory has 32 banks that are organized such that successive 32-bit words map to successive banks. Each bank has a bandwidth of 32 bits per cycle.
 When multiple threads in the same warp attempt to access different elements in the same bank, a **bank conflict** occurs.
 
 This is the case in the example above:
