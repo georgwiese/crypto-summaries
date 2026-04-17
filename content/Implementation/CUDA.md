@@ -138,3 +138,4 @@ A common fix to this (according to the programming guide) is to allocate the sha
 ## Practical Tips
 - Set `CUDA_LOG_FILE` env variable to debug CUDA errors
 - Kernel resource usage (e.g. the size of the shared memory) can be determined by passing `--resource-usage` to `nvcc`
+- Profiling tools: [NSight Compute](https://developer.nvidia.com/nsight-compute) and [NSight Systems](https://developer.nvidia.com/nsight-systems)
