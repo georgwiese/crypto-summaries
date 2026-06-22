@@ -244,9 +244,8 @@ example (x y : Nat) :
   calc
     (x + y) * (x + y)
       = (x + y) * x + (x + y) * y := Nat.mul_add (x + y) x y
-    _ = x * x + y * x + (x * y + y * y) :=
-        (congrArg (· + (x + y) * y) (Nat.add_mul x y x)).trans
-          (congrArg (x * x + y * x + ·) (Nat.add_mul x y y))
+    _ = x * x + y * x + (x + y) * y := (congrArg (· + (x + y) * y) (Nat.add_mul x y x))
+    _ = x * x + y * x + (x * y + y * y) := (congrArg (x * x + y * x + ·) (Nat.add_mul x y y))
     _ = x * x + y * x + x * y + y * y := (Nat.add_assoc (x * x + y * x) (x * y) (y * y)).symm
 ```
 
