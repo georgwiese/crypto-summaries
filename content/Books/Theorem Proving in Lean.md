@@ -214,8 +214,8 @@ example (x y : Nat) :
     Nat.mul_add (x + y) x y
   have h2 : (x + y) * (x + y) = x * x + y * x + (x * y + y * y) :=
     -- Nat.add_mul (n m k : Nat) : (n + m) * k = n * k + m * k
-    -- => Nat.add_mul x y x ≡ (x + y) * x = x * x + y * x
-    -- => Nat.add_mul x y y ≡ (x + y) * y = x * y + y * y
+    -- => Nat.add_mul x y x => (x + y) * x = x * x + y * x
+    -- => Nat.add_mul x y y => (x + y) * y = x * y + y * y
     -- => Plugging both into h1 yields h2
     (Nat.add_mul x y x) ▸ (Nat.add_mul x y y) ▸ h1
   -- Nat.add_assoc (n m k : Nat) : n + m + k = n + (m + k)
