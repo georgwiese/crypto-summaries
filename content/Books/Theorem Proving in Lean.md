@@ -243,10 +243,10 @@ example (x y : Nat) :
     x * x + y * x + x * y + y * y :=
   calc
     (x + y) * (x + y)
-      = (x + y) * x + (x + y) * y := Nat.mul_add (x + y) x y
-    _ = x * x + y * x + (x + y) * y := (congrArg (· + (x + y) * y) (Nat.add_mul x y x))
+      = (x + y) * x + (x + y) * y       := Nat.mul_add (x + y) x y
+    _ = x * x + y * x + (x + y) * y     := (congrArg (· + (x + y) * y) (Nat.add_mul x y x))
     _ = x * x + y * x + (x * y + y * y) := (congrArg (x * x + y * x + ·) (Nat.add_mul x y y))
-    _ = x * x + y * x + x * y + y * y := (Nat.add_assoc (x * x + y * x) (x * y) (y * y)).symm
+    _ = x * x + y * x + x * y + y * y   := (Nat.add_assoc (x * x + y * x) (x * y) (y * y)).symm
 ```
 
 This becomes even more readable by using the `rw` tactic:
@@ -256,9 +256,9 @@ example (x y : Nat) :
     x * x + y * x + x * y + y * y :=
   calc
     (x + y) * (x + y)
-      = (x + y) * x + (x + y) * y := by rw [Nat.mul_add]
+      = (x + y) * x + (x + y) * y       := by rw [Nat.mul_add]
     _ = x * x + y * x + (x * y + y * y) := by rw [Nat.add_mul, Nat.add_mul]
-    _ = x * x + y * x + x * y + y * y := by rw [Nat.add_assoc (x * x + y * x) _ _]
+    _ = x * x + y * x + x * y + y * y   := by rw [Nat.add_assoc (x * x + y * x) _ _]
 ```
 
 # Appendix
