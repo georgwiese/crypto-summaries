@@ -13,6 +13,14 @@ Keywords:
 - `let`: Local definition. E.g `let a := t1; t2` is definitionally equal to the result of replacing every occurrence of `a` in `t2` by `t1`. Used e.g. for local variables in functions.
 - `fun`: Creates a function from an expression, e.g. `fun (x : Nat) => x + 5`
 
+**Declaration binders** are a shorthand notation for writing functions. For example, the following two definitions are equal:
+```lean
+def inc: Nat → Nat := fun x => x + 1
+-- Adding the argument `x` to the LHS of the `:` is syntactic sugar for the
+-- `fun x =>` on the RHS.
+def inc (x : Nat) : Nat := x + 1
+```
+
 Definitions:
 - "definitionally equal": Two terms that reduce to the same value
 - "dependent types": Types that depend on parameters (including parameters of type `Type`).
@@ -120,7 +128,7 @@ theorem double_negation (p: Prop) (h: ¬¬p) : p :=
   (Classical.em p).elim
     -- If `p` is true, then we are done.
     (fun hp => hp)
-    -- If `¬p` is true, we both `hnp: ¬p` and `h: ¬¬p`, which is a contradiction
+    -- If `¬p` is true, we have both `hnp: ¬p` and `h: ¬¬p`, which is a contradiction
     -- from which we can derive `p` (or anything else, for that matter).
     -- `¬q` is defined as `q → False`, so `h` is a function that takes a proof of `¬p`
     -- and produces a proof of `False`. Applying the elimination rule for `False` allows
@@ -130,13 +138,130 @@ theorem double_negation (p: Prop) (h: ¬¬p) : p :=
 
 -- The law of excluded middle also follows from double negation:
 example (p: Prop): p ∨ ¬p :=
-  double_negation (p ∨ ¬p)
-    (fun (h: ¬(p ∨ ¬p)) => h (Or.inr (fun hp => h (Or.inl hp))))
+  double_negation (p ∨ ¬p) fun (h: ¬(p ∨ ¬p)) =>
+    have hnp : ¬p := fun hp => h (Or.inl hp)
+    h (Or.inr hnp)
 ```
 
 The classical axioms give us access to additional proof patterns:
 - Proof by cases: `Classical.byCases` allows us to derive `q` if we can show `p → q` and `¬p → q`.
 - Proof by contradiction: `Classical.byContradiction` allows us to derive `p` if we can show `¬p → False`.
+
+## The Universal Quantifier
+
+If `p` is an expression, `∀ x: α, p` is syntactic sugar for `(x: α) → p`. Typically, the expression `p` will depend on `x`.
+
+Example:
+```lean
+-- The following two statements are definitionally equal:
+-- example (α: Type) (p q: α → Prop) : ((x: α) → p x ∧ q x) → ((y: α) → p y) :=
+example (α: Type) (p q: α → Prop) : (∀ x : α, p x ∧ q x) → ∀ y : α, p y :=
+    fun h: ∀ x : α, p x ∧ q x =>
+    fun y: α => (h y).left
+```
+
+Often, the bound variables of a quantifier are made implicit.
+
+```lean
+variable (α: Type) (r: α → α → Prop)
+
+variable (refl_r: ∀ {x}, r x x)
+variable (symm_r: ∀ {x y}, r x y → r y x)
+variable (trans_r: ∀ {x y z}, r x y → r y z → r x z)
+
+example (a b c d: α) (hab: r a b) (hcb: r c b) (hcd: r c d): r a d :=
+  trans_r (trans_r hab (symm_r hcb)) hcd
+```
+
+## Equality
+
+The *equality* relation `Eq` is an equivalence relation (reflexive, symmetric, and transitive) with the important property that *every assertion respects the equality*, in the sense that *we can substitute equal expressions without changing the truth value*.
+
+It has one constructor, `Eq.refl`, which states that any term is equal to itself.
+
+```lean
+example: 2 + 3 = 5 := Eq.refl 5
+-- The argument to `Eq.refl` can be inferred:
+example: 2 + 3 = 5 := Eq.refl _
+-- The `rfl` keyword is a shorthand for `Eq.refl _`:
+example: 2 + 3 = 5 := rfl
+```
+
+Given `h1 : a = b` and `h2 : p a`, we can construct a proof for `p b` using substitution: `Eq.subst h1 h2`. The `▸` macro (typed `\t`) is a shorthand for `Eq.subst`, so we can write `h1 ▸ h2` instead of `Eq.subst h1 h2`. Aside from being more concise, it works in more contexts, because it has more effective type inference heuristics.
+
+
+
+`congrArg` is a useful tool for proving equalities. Given `h : a = b` and a function `f`, `congrArg f h` gives us `f a = f b`. It can be used to apply the same transformation to both sides of an equality.
+
+```lean
+theorem add_same (x : Nat) : x + x = 2 * x :=
+  have h1 : x + x = 1 * x + 1 * x :=
+    -- Nat.one_mul (n : Nat) : 1 * n = n
+    -- => Using congrArg, build `x + x = 1 * x + 1 * x`
+    congrArg (fun t => t + t) (Nat.one_mul x).symm
+  -- (Nat.add_mul 1 1 x).symm => 1 * x + 1 * x = (1 + 1) * x
+  h1.trans (Nat.add_mul 1 1 x).symm
+```
+
+Example:
+```lean
+example (x y : Nat) :
+    (x + y) * (x + y) =
+    x * x + y * x + x * y + y * y :=
+  have h1 : (x + y) * (x + y) = (x + y) * x + (x + y) * y :=
+    -- Nat.mul_add (n m k : Nat) : n * (m + k) = n * m + n * k
+    -- => Instantiate with n = (x + y), m = x, k = y
+    Nat.mul_add (x + y) x y
+  have h2 : (x + y) * (x + y) = x * x + y * x + (x * y + y * y) :=
+    -- Nat.add_mul (n m k : Nat) : (n + m) * k = n * k + m * k
+    -- => Nat.add_mul x y x ≡ (x + y) * x = x * x + y * x
+    -- => Nat.add_mul x y y ≡ (x + y) * y = x * y + y * y
+    -- => Plugging both into h1 yields h2
+    (Nat.add_mul x y x) ▸ (Nat.add_mul x y y) ▸ h1
+  -- Nat.add_assoc (n m k : Nat) : n + m + k = n + (m + k)
+  -- => Using this and symmetry we show that
+  --    x * x + y * x + (x * y + y * y) = x * x + y * x + x * y + y * y
+  -- => By transitivity, this transforms h2 to the final statement
+  h2.trans (Nat.add_assoc (x * x + y * x) (x * y) (y * y)).symm
+```
+
+The `calc` keyword allows us to chain together a sequence of equalities, which is often more readable than using `trans` repeatedly.
+
+It has the following syntax:
+```
+calc
+  <expr>_0  'op_1'  <expr>_1  ':='  <proof>_1
+  '_'       'op_2'  <expr>_2  ':='  <proof>_2
+  ...
+  '_'       'op_n'  <expr>_n  ':='  <proof>_n
+```
+
+The example above can be rewritten using `calc` as follows:
+```lean
+example (x y : Nat) :
+    (x + y) * (x + y) =
+    x * x + y * x + x * y + y * y :=
+  calc
+    (x + y) * (x + y)
+      = (x + y) * x + (x + y) * y := Nat.mul_add (x + y) x y
+    _ = x * x + y * x + (x * y + y * y) :=
+        (congrArg (· + (x + y) * y) (Nat.add_mul x y x)).trans
+          (congrArg (x * x + y * x + ·) (Nat.add_mul x y y))
+    _ = x * x + y * x + x * y + y * y := (Nat.add_assoc (x * x + y * x) (x * y) (y * y)).symm
+```
+
+This becomes even more readable by using the `rw` tactic:
+```lean
+example (x y : Nat) :
+    (x + y) * (x + y) =
+    x * x + y * x + x * y + y * y :=
+  calc
+    (x + y) * (x + y)
+      = (x + y) * x + (x + y) * y := by rw [Nat.mul_add]
+    _ = x * x + y * x + (x * y + y * y) := by rw [Nat.add_mul, Nat.add_mul]
+    _ = x * x + y * x + x * y + y * y :=
+        by rw [Nat.add_assoc (x * x + y * x) (x * y) (y * y)]
+```
 
 # Appendix
 
