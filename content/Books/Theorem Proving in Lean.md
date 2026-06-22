@@ -75,7 +75,7 @@ example (a: Nat): a = 1 ∨ a ≠ 1 :=
 Introduction and elimination rules:
 - An *introduction rule* says how to *build* a proof of a connective.
 - An *elimination rule* says how to *use* a proof you already have.
-- For an inductive type: #constructors = #intro rules, and the eliminator (recursor) must cover every constructor.
+- For an inductive type: number of constructors = number of introduction rules, and the eliminator (recursor) must cover every constructor.
 
 | Connective | intro | elim |
 |---|---|---|
