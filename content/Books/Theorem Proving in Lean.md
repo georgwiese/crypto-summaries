@@ -258,8 +258,7 @@ example (x y : Nat) :
     (x + y) * (x + y)
       = (x + y) * x + (x + y) * y := by rw [Nat.mul_add]
     _ = x * x + y * x + (x * y + y * y) := by rw [Nat.add_mul, Nat.add_mul]
-    _ = x * x + y * x + x * y + y * y :=
-        by rw [Nat.add_assoc (x * x + y * x) (x * y) (y * y)]
+    _ = x * x + y * x + x * y + y * y := by rw [Nat.add_assoc (x * x + y * x) _ _]
 ```
 
 # Appendix
