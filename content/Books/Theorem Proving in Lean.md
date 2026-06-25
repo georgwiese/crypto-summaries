@@ -261,7 +261,212 @@ example (x y : Nat) :
     _ = x * x + y * x + x * y + y * y   := by rw [Nat.add_assoc (x * x + y * x) _ _]
 ```
 
+## The Existential Quantifier
+
+`∃ x : α, p x` is syntactic sugar for `Exists (x : α) → p x`. It has one constructor, `Exists.intro`, which takes a witness `w : α` and a proof of `p w` and gives us a proof of `∃ x : α, p x`. Its eliminator, `Exists.elim`, allows us to derive a proposition `q` from a proof of `∃ x : α, p x` if we can show that for any witness `w` and any proof of `p w`, we can derive `q`.
+
+```lean
+example (x y z : Nat) (hxy : x < y) (hyz : y < z) : ∃ w, x < w ∧ w < z :=
+  -- or shorter: ⟨ y, hxy, hyz ⟩
+  Exists.intro y (And.intro hxy hyz)
+
+example (x z : Nat) (h: ∃ w, x < w ∧ w < z): x < z :=
+  -- The argument to `elim` is of type `∀ (w : Nat), x < w ∧ w < z → x < z`
+  -- or (equivalently): `(w : Nat) → x < w ∧ w < z → x < z`
+  h.elim (fun w: Nat => fun hw: x < w ∧ w < z => Nat.lt_trans hw.left hw.right)
+```
+
+The second example can be rewritten using a `match` expression:
+```lean
+example (x z : Nat) (h: ∃ w, x < w ∧ w < z): x < z :=
+  match h with
+  | ⟨ (w: Nat), (hw: x < w ∧ w < z) ⟩ => Nat.lt_trans hw.left hw.right
+```
+
+Example:
+```lean
+def IsEven (a : Nat) := ∃ b, a = 2 * b
+
+theorem even_plus_even (h1 : IsEven a) (h2 : IsEven b) : IsEven (a + b) :=
+  match h1, h2 with
+  | ⟨w1, (hw1: a = 2 * w1)⟩, ⟨w2, (hw2: b = 2 * w2)⟩ =>
+    -- OR: have h: a + b = 2 * (w1 + w2) := by rw [hw1, hw2, Nat.mul_add]
+    have h: a + b = 2 * (w1 + w2) := (
+      calc a + b
+          = 2 * w1 + 2 * w2 := by rw [hw1, hw2]
+        _ = 2 * (w1 + w2)   := by rw [Nat.mul_add])
+    ⟨ (w1 + w2), h ⟩
+```
+
+# Tactics
+
+Tactics are a way to write proofs automatically by applying a sequence of proof steps. They are often more readable than writing out the proof term explicitly. Stating a theorem or introducing a `have` statement creates a *goal* (to construct a term of the given type). Tactics are applied to the current goal, and may produce new subgoals. The proof is complete when all goals have been solved. Wherever a term is expected, a tactic block can be used instead: `by <tactics>`, where `<tactics>` is a sequence of tactics separated by semicolons or line breaks.
+
+## `apply` and `exact`
+
+Example:
+```lean
+theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by
+  -- At this point, there is a single goal:
+  -- ⊢ p ∧ q ∧ p
+  apply And.intro
+  -- `apply And.intro` consumed the goal and produced two new ones:
+  -- case left
+  -- ⊢ p
+  -- case right
+  -- ⊢ q ∧ p
+  exact hp
+  -- `exact hp` consumes the first goal and closes it.
+  -- The `exact` tactic allows you to provide an explicit term
+  -- that has the expected type
+  apply And.intro
+  -- Again, we split the remaining goal (q ∧ p) into 2:
+  -- case right.left
+  -- ⊢ q
+  -- case right.right
+  -- ⊢ p
+  exact hq
+  -- Closes right.left
+  exact hp
+  -- Closes right.right, which completes the proof
+```
+
+The cases are often *tagged*. In the case of the `apply` tactic, the tag names are derived from the parameters' names.
+This allows you to refer to a specific subgoal by its tag name and handle them in any order:
+```lean
+theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by
+  apply And.intro
+  case right =>
+    apply And.intro
+    case left => exact hq
+    case right => exact hp
+  case left => exact hp
+```
+
+Also, tactic commands can take compound expressions, so the proof above can be written more concisely as:
+```lean
+theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by
+  apply And.intro hp
+  exact And.intro hq hp
+```
+
+Finally, we can also structure the proof without referring to the subgoals by name:
+```lean
+theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by
+  apply And.intro
+  . exact hp
+  . exact And.intro hq hp
+```
+
+Using `#print test`, we can inspect the proof term that was constructed by the tactics:
+```
+theorem test : ∀ (p q : Prop), p → q → p ∧ q ∧ p :=
+fun p q hp hq => ⟨hp, ⟨hq, hp⟩⟩
+```
+
+## `intro`, `assumption` and `intros`
+
+`intro x` essentially generates `fun x =>` in the proof term. You can also introduce several variables:
+```lean
+example (p q : Prop) : p → q → p ∧ q := by
+  -- ⊢ p → q → p ∧ q
+  intro hp hq
+  -- `intro` introduces variables of type `p` and `q`:
+  -- hp : p
+  -- hq : q
+  -- ⊢ p ∧ q
+  exact And.intro hp hq
+```
+
+The `intro` tactic allows us to use an implicit `match`:
+```lean
+example (p q : α → Prop) : (∃ x, p x ∨ q x) → ∃ x, q x ∨ p x := by
+  intro
+  | ⟨w, Or.inl h⟩ => exact ⟨w, Or.inr h⟩
+  | ⟨w, Or.inr h⟩ => exact ⟨w, Or.inl h⟩
+```
+
+The `assumption` tactic looks for a hypothesis that matches the current goal and applies it. It is equivalent to `exact h` where `h` is a hypothesis of the same type as the goal.
+
+```lean
+example (h₁ : x = y) (h₂ : y = z) (h₃ : z = w) : x = w := by
+  apply Eq.trans h₁  -- Consumes `x = w`, produces new goal `y = w`
+  apply Eq.trans h₂  -- Consumes `y = w`, produces new goal `z = w`
+  assumption         -- Applies `h₃`
+```
+
+This is a more complicated example, involving metavariables:
+```lean
+example : ∀ a b c : Nat, a = b → b = c → a = c := by
+  intro a b c hab hbc
+  -- At this point, the goal is a = c
+  apply Eq.trans
+  -- `Eq.trans` has type `(h₁ : a = b) (h₂ : b = c) : a = c`, but `b`
+  -- is not mentioned in the conclusion!
+  -- So, Lean creates a new metavariable `?b` and 3 subgoals:
+  -- case h₁: ⊢ a = ?b
+  -- case h₂: ⊢ ?b = c
+  -- case b: ⊢ Nat     => What is `?b`?
+  assumption
+  -- After this `assumption`, Lean scans the hypotheses to match ⊢ a = ?b
+  -- and finds hab: a = b. To match, it unifies ?b := b.
+  -- Because of this, the `b` goal is closed as a side effect.
+  -- Now, `assumption` can find hbc to close the final goal
+  assumption
+```
+
+With `assumption`, the names of the introduced variables are not actually referenced. The `intros` tactic (without any arguments) introduces all the variables and hypotheses in one go, without naming them.
+
+## `rfl`
+
+Syntactic sugar for `exact rfl`.
+
+## `repeat`
+
+The `repeat` combinator can be used to apply a tactic several times:
+
+```lean
+example : ∀ a b c : Nat, a = b → b = c → a = c := by
+  intros
+  apply Eq.trans
+  repeat assumption
+```
+
+## `revert` and `generalize`
+
+`revert` is the opposite of `intro`. It moves a hypothesis back into the goal. For example, if we have a goal `⊢ p → q` and a hypothesis `h : p`, then `revert h` will change the goal to `⊢ p → q` and remove `h` from the context.
+
+Similarly, you can replace arbitrary expressions in the goal by a fresh variable using `generalize`.
+
+## `admit`
+
+The equivalent of `sorry` in tactic mode.
+
+## `rw` (rewrite)
+
+`rw` example:
+```lean
+def divides (x y : Nat) : Prop :=
+  ∃ k, k*x = y
+
+def divides_trans (h₁ : divides x y) (h₂ : divides y z) : divides x z :=
+  let ⟨k₁, (d₁: k₁ * x = y)⟩ := h₁
+  let ⟨k₂, (d₂: k₂ * y = z)⟩ := h₂
+  let d: (k₁ * k₂) * x = z := by rw [
+    -- Goal: (k₁ * k₂) * x = z
+    Nat.mul_comm k₁ k₂,
+    -- Goal: (k₂ * k₁) * x = z
+    Nat.mul_assoc,
+    -- Goal: k₂ * (k₁ * x) = z
+    d₁,
+    -- Goal: k₂ * y = z
+    d₂
+    -- Goal: z = z => closed by `rfl` => Done!
+  ]
+  ⟨k₁ * k₂ , d⟩
+```
+
 # Appendix
 
 TODO:
-- Explain `show`, `suffices`
+- Explain `show`, `suffices`, `this`, `assumption`
