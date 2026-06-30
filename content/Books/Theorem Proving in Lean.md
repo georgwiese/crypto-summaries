@@ -263,7 +263,7 @@ example (x y : Nat) :
 
 ## The Existential Quantifier
 
-`∃ x : α, p x` is syntactic sugar for `Exists (x : α) → p x`. It has one constructor, `Exists.intro`, which takes a witness `w : α` and a proof of `p w` and gives us a proof of `∃ x : α, p x`. Its eliminator, `Exists.elim`, allows us to derive a proposition `q` from a proof of `∃ x : α, p x` if we can show that for any witness `w` and any proof of `p w`, we can derive `q`.
+`∃ x : α, p x` is syntactic sugar for `Exists (fun x : α => p x)`. It has one constructor, `Exists.intro`, which takes a witness `w : α` and a proof of `p w` and gives us a proof of `∃ x : α, p x`. Its eliminator, `Exists.elim`, allows us to derive a proposition `q` from a proof of `∃ x : α, p x` if we can show that for any witness `w` and any proof of `p w`, we can derive `q`.
 
 ```lean
 example (x y z : Nat) (hxy : x < y) (hyz : y < z) : ∃ w, x < w ∧ w < z :=
@@ -434,7 +434,7 @@ example : ∀ a b c : Nat, a = b → b = c → a = c := by
 
 ## `revert` and `generalize`
 
-`revert` is the opposite of `intro`. It moves a hypothesis back into the goal. For example, if we have a goal `⊢ p → q` and a hypothesis `h : p`, then `revert h` will change the goal to `⊢ p → q` and remove `h` from the context.
+`revert` is the opposite of `intro`. It moves a hypothesis back into the goal. For example, if we have a goal `⊢ q` and a hypothesis `h : p`, then `revert h` will change the goal to `⊢ p → q` and remove `h` from the context.
 
 Similarly, you can replace arbitrary expressions in the goal by a fresh variable using `generalize`.
 
@@ -442,7 +442,51 @@ Similarly, you can replace arbitrary expressions in the goal by a fresh variable
 
 The equivalent of `sorry` in tactic mode.
 
+## `cases`
+
+The `cases` is similar to `elim` in that it allows us to destructure a hypothesis.
+
+```lean
+example (p q : Prop) : p ∨ q → q ∨ p := by
+  intro h
+  cases h with
+  | inl hp => apply Or.inr; exact hp
+  | inr hq => apply Or.inl; exact hq
+```
+
+## `contradiction`
+
+`contradiction` is a tactic that looks for a contradiction in the hypotheses and closes the goal if it finds one.
+
+## `have`, `let`, and `show`
+
+These tactics are very similar to their counterparts in term mode. `have` and `let` introduce a new hypothesis or definition, while `show` is a way to restate the goal.
+
+```lean
+example : 2 + 2 = 4 := by
+  let n := 2
+  have h : n + n = 4 := rfl
+  show 2 + 2 = 4
+  exact h
+```
+
+## Tactic combinators
+
+
+The combinator `tactic1 <;> tactic2` applies `tactic1` to the current goal, and then applies `tactic2` to all the resulting subgoals.
+```lean
+example (p : Prop) : p ∨ p → p := by
+  intro h
+  cases h <;> assumption
+```
+
+`first | t₁ | t₂ | ... | tₙ` applies the first tactic `tᵢ` that succeeds. If all tactics fail, the whole tactic fails.
+
+`try t` applies the tactic `t` to the current goal, and if it fails, it does nothing (it does not fail). It is equivalent to `first | t | skip`.
+
 ## `rw` (rewrite)
+
+`rw [t]`, where `t` is a term whose type asserts an equality, rewrites the goal by replacing the left-hand side of the equality with the right-hand side. For example, `t` can be an hypothesis (`h : a = b`) or a general lemma (`add_comm: ∀ x y, x + y = y + x`). It can also be used to rewrite hypotheses (`rw [t] at h`).
 
 `rw` example:
 ```lean
@@ -466,7 +510,74 @@ def divides_trans (h₁ : divides x y) (h₂ : divides y z) : divides x z :=
   ⟨k₁ * k₂ , d⟩
 ```
 
-# Appendix
+## `simp` (simplify)
 
-TODO:
-- Explain `show`, `suffices`, `this`, `assumption`
+The `simp` tactic simplifies the goal (or hypotheses, with `simp at h`) by applying a set of rewrite rules: identities have been tagged with the `[simp]` attribute.
+
+```lean
+def f (m n : Nat) : Nat :=
+  m + n + m
+
+theorem add_self (a : Nat) : a + a = 2 * a := (Nat.two_mul a).symm
+
+-- Option to see the trace of `simp`
+
+set_option trace.Meta.Tactic.simp.rewrite true in
+-- This simplifier proves this in these steps:
+-- - Applies definition of `f` to get `a + 0 + a = 2 * a`
+-- - Removes the addition of 0 to get `a + a = 2 * a`
+--   (this is a rule with a `simp` attribute)
+-- - Applies `add_self` to get `2 * a = 2 * a`
+-- - Finishes by rfl
+example (a : Nat) : f a 0 = 2 * a := by simp [f, add_self]
+```
+
+To use all the hypotheses in the context, use `simp [*]` (or `simp at *` to simplify all hypotheses).
+
+This is an example of how to use the `simp` attribute:
+```lean
+def mk_symm (xs : List α) :=
+  xs ++ xs.reverse
+
+@[simp] theorem reverse_mk_symm (xs : List α) :
+    (mk_symm xs).reverse = mk_symm xs := by
+  simp [mk_symm]
+
+example (xs ys : List Nat) :
+    (xs ++ mk_symm ys).reverse = mk_symm ys ++ xs.reverse := by
+  simp
+```
+
+
+## `split`
+
+The `split` tactic is used to split if-then-else and match expressions into cases:
+
+```lean
+def f (x y z : Nat) : Nat :=
+  match x, y, z with
+  | 5, _, _ => y
+  | _, 5, _ => y
+  | _, _, 5 => y
+  | _, _, _ => 1
+
+example (x y z : Nat) : x ≠ 5 → y ≠ 5 → z ≠ 5 → z = w → f x y w = 1 := by
+  intros
+  simp [f]
+  -- At this point, the goal is:
+  -- ⊢ (match x, y, w with
+  --   | 5, x, _ => y
+  --   | x, 5, _ => y
+  --   | x, _, 5 => y
+  --   | x, _, _ => 1) =
+  --   1
+  split
+  . contradiction
+  . contradiction
+  . contradiction
+  . rfl
+
+-- Or, using combinators:
+example (x y z : Nat) : x ≠ 5 → y ≠ 5 → z ≠ 5 → z = w → f x y w = 1 := by
+  intros; simp [f]; split <;> first | contradiction | rfl
+```
